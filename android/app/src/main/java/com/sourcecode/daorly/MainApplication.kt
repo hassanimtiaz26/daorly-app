@@ -1,4 +1,4 @@
-package com.sourcecode.daory
+package com.sourcecode.daorly
 
 import android.app.Application
 import android.content.res.Configuration

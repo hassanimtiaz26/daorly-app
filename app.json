@@ -1,16 +1,16 @@
 {
   "expo": {
-    "name": "daory",
-    "slug": "daory",
+    "name": "daorly",
+    "slug": "daorly",
     "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "daory",
+    "scheme": "daorly",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.sourcecode.daory"
+      "bundleIdentifier": "com.sourcecode.daorly"
     },
     "android": {
       "adaptiveIcon": {
@@ -18,7 +18,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.sourcecode.daory",
+      "package": "com.sourcecode.daorly",
       "versionCode": 1
     },
     "web": {

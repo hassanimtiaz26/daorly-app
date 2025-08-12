@@ -87,9 +87,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.sourcecode.daory'
+    namespace 'com.sourcecode.daorly'
     defaultConfig {
-        applicationId 'com.sourcecode.daory'
+        applicationId 'com.sourcecode.daorly'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

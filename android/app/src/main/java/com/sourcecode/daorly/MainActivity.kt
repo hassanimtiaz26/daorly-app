@@ -1,4 +1,4 @@
-package com.sourcecode.daory
+package com.sourcecode.daorly
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build
