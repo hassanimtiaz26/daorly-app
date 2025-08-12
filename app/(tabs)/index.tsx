@@ -9,7 +9,7 @@ import { Input } from 'postcss';
 
 export default function HomeScreen() {
   return (
-    <ThemedView style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+    <ThemedView style={{ flex: 1 }}>
       <TextInput style={{ width: '100%' }} placeholder={'Enter Name'} />
     </ThemedView>
   );
