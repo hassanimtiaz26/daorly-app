@@ -1,18 +1,35 @@
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import { PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { BaseTheme } from '@core/config/theme.config';
 import { StyleSheet, View } from 'react-native';
+import { SplashScreen, Stack } from 'expo-router';
+import { useAuthStore } from '@shared/store/useAuthStore';
+import { useEffect } from 'react';
+
 
 export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
+  const { isLoading, isAuthenticated, setIsLoading } = useAuthStore();
 
-  if (!loaded) {
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 3000)
+  }, []);
+
+  useEffect(() => {
+    if (loaded && !isLoading) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded, isLoading]);
+
+
+  if (!loaded && isLoading) {
     // Async font loading only occurs in development.
     return null;
   }
@@ -21,8 +38,15 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <PaperProvider theme={BaseTheme}>
         <View style={styles.container}>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Protected guard={!isAuthenticated}>
+              <Stack.Screen name="(auth)" />
+            </Stack.Protected>
+
+            <Stack.Protected guard={isAuthenticated}>
+              <Stack.Screen name="(app)" />
+            </Stack.Protected>
+
             <Stack.Screen name="+not-found" />
           </Stack>
           <StatusBar

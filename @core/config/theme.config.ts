@@ -4,7 +4,7 @@ type ThemeConfig = MD3Theme & {};
 
 export const BaseTheme: ThemeConfig = {
   ...MD3LightTheme,
-  roundness: 4,
+  roundness: 12,
   colors: {
     // Primary color: #4174BA
     primary: 'rgb(65, 116, 186)',
@@ -31,9 +31,9 @@ export const BaseTheme: ThemeConfig = {
     onErrorContainer: 'rgb(65, 14, 11)',
 
     // Background and surface colors
-    background: 'rgb(253, 252, 255)',
+    background: 'rgb(255, 255, 255)',
     onBackground: 'rgb(27, 27, 30)',
-    surface: 'rgb(253, 252, 255)',
+    surface: 'rgb(255, 255, 255)',
     onSurface: 'rgb(27, 27, 30)',
     surfaceVariant: 'rgb(225, 227, 232)',
     onSurfaceVariant: 'rgb(68, 71, 75)',
