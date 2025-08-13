@@ -5,6 +5,18 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "@app/*": [
+        "./app/*"
+      ],
+      "@components/*": [
+        "./@shared/components/*"
+      ],
+      "@core/*": [
+        "./@core/*"
+      ],
+      "@shared/*": [
+        "./@shared/*"
       ]
     }
   },
