@@ -7,16 +7,24 @@ export const BaseTheme: ThemeConfig = {
   roundness: 12,
   colors: {
     // Primary color: #4174BA
-    primary: 'rgb(65, 116, 186)',
+    primary: 'rgb(15, 179, 167)',
     onPrimary: 'rgb(255, 255, 255)',
-    primaryContainer: 'rgb(216, 226, 255)',
-    onPrimaryContainer: 'rgb(0, 28, 56)',
+    primaryContainer: 'rgb(112, 247, 233)',
+    onPrimaryContainer: 'rgb(0, 32, 29)',
+    // secondary: 'rgb(15, 179, 167)',
+    // onSecondary: 'rgb(255, 255, 255)',
+    // secondaryContainer: 'rgb(112, 247, 233)',
+    // onSecondaryContainer: 'rgb(0, 32, 29)',
 
     // Secondary color: #0FB3A7
-    secondary: 'rgb(15, 179, 167)',
+    secondary: 'rgb(65, 116, 186)',
     onSecondary: 'rgb(255, 255, 255)',
-    secondaryContainer: 'rgb(112, 247, 233)',
-    onSecondaryContainer: 'rgb(0, 32, 29)',
+    secondaryContainer: 'rgb(216, 226, 255)',
+    onSecondaryContainer: 'rgb(0, 28, 56)',
+    // primary: 'rgb(65, 116, 186)',
+    // onPrimary: 'rgb(255, 255, 255)',
+    // primaryContainer: 'rgb(216, 226, 255)',
+    // onPrimaryContainer: 'rgb(0, 28, 56)',
 
     // A complementary tertiary color
     tertiary: 'rgb(125, 82, 96)',

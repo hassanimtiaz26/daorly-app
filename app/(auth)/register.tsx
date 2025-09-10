@@ -63,6 +63,20 @@ export default function RegisterScreen() {
             mode={'outlined'}
             label={'Phone Number'}
             right={<TextInput.Icon size={18} icon={'phone'} />} />
+
+          <ThemedTextInput
+            mode={'outlined'}
+            secureTextEntry={true}
+            autoCapitalize="none"
+            label={'Password'}
+            right={<TextInput.Icon size={18} icon={'eye'} />} />
+
+          <ThemedTextInput
+            mode={'outlined'}
+            secureTextEntry={true}
+            autoCapitalize="none"
+            label={'Confirm Password'}
+            right={<TextInput.Icon size={18} icon={'eye'} />} />
         </View>
       </View>
 
