@@ -2,19 +2,31 @@ import { useFonts } from 'expo-font';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import { PaperProvider } from 'react-native-paper';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { BaseTheme } from '@core/config/theme.config';
 import { StyleSheet, View } from 'react-native';
 import { SplashScreen, Stack } from 'expo-router';
 import { useAuthStore } from '@shared/store/useAuthStore';
 import { useEffect } from 'react';
+import '@core/localization/i18n';
+import { MD3Colors } from 'react-native-paper/lib/typescript/types';
+import { useAppTheme } from '@core/hooks/useAppTheme';
 
+const createStyles = (colors: MD3Colors) => StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+  }
+});
 
 export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
   const { isLoading, isAuthenticated, setIsLoading } = useAuthStore();
+
+  const { colors } = useAppTheme();
+  const styles = createStyles(colors);
 
   useEffect(() => {
     setTimeout(() => {
@@ -37,7 +49,7 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <PaperProvider theme={BaseTheme}>
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Protected guard={!isAuthenticated}>
               <Stack.Screen name="(auth)" />
@@ -51,15 +63,9 @@ export default function RootLayout() {
           </Stack>
           <StatusBar
             style="dark" />
-        </View>
+        </SafeAreaView>
       </PaperProvider>
     </SafeAreaProvider>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: BaseTheme.colors.background,
-  }
-})

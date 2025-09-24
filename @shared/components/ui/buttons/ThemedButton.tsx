@@ -12,6 +12,7 @@ const ThemedButton: FC<ButtonProps & AdditionalButtonProps> = ({ children, butto
 
   return (
     <Button
+      mode={'contained'}
       style={[styles.button, style]}
       buttonColor={buttonStyle ? colors[buttonStyle] : colors.primary}
       labelStyle={styles.buttonLabel}

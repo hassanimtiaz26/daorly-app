@@ -1,6 +1,26 @@
 {
   "general": {
-    "welcome": "Welcome to Daorly",
-    "logout": "Logout"
+    "welcome": "Welcome to Daorly!",
+    "phoneNumber": "Phone Number",
+    "password": "Password",
+    "continue": "Continue",
+    "continueAsBusiness": "Continue as a Business Provider",
+    "logout": "Logout",
+    "signUp": "Sign Up",
+    "signIn": "Sign In"
+  },
+  "auth": {
+    "login": {
+      "haveAccount": "Don't have an account?",
+      "errors": {
+        "invalidPhoneNumber": "Invalid phone number"
+      }
+    },
+    "register": {
+      "haveAccount": "Already have an account?",
+      "errors": {
+        "invalidPhoneNumber": "Invalid phone number"
+      }
+    }
   }
 }

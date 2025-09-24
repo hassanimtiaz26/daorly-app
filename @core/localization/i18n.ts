@@ -2,8 +2,12 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import { ar, en } from './locales/index';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getLocales } from 'expo-localization';
+import { I18nManager } from 'react-native';
 
 const STORE_LANGUAGE_KEY = 'settings.lang';
+
+const RTL_LANGUAGES = ['ar'];
 
 const languageDetectorPlugin: any = {
   type: 'languageDetector',
@@ -11,24 +15,27 @@ const languageDetectorPlugin: any = {
   init: () => {},
   detect: async function (callback: (lang: string) => void) {
     try {
-      // get stored language from Async storage
-      // put your own language detection logic here
-      await AsyncStorage.getItem(STORE_LANGUAGE_KEY).then(language => {
-        if (language) {
-          // if language was stored before, use this language in the app
-          return callback(language);
-        } else {
-          // if language was not stored yet, use english
-          return callback('en');
-        }
-      });
+      const storedLanguage = await AsyncStorage.getItem(STORE_LANGUAGE_KEY);
+      let locale: string;
+
+      if (storedLanguage) {
+        locale = storedLanguage;
+      } else {
+        locale = getLocales()[0]?.languageCode || 'en';
+      }
+
+      const isRTL = RTL_LANGUAGES.includes(locale);
+
+      I18nManager.forceRTL(isRTL);
+      I18nManager.allowRTL(isRTL);
+
+      return callback(locale);
     } catch (error) {
       console.log('Error reading language', error);
     }
   },
   cacheUserLanguage: async function (language: string) {
     try {
-      //save a user's language choice in Async storage
       await AsyncStorage.setItem(STORE_LANGUAGE_KEY, language);
     } catch (error) {}
   },
@@ -47,11 +54,11 @@ i18n
   .use(languageDetectorPlugin)
   .init({
     resources,
-    compatibilityJSON: 'v3',
-    // fallback language is set to english
+    compatibilityJSON: 'v4',
     fallbackLng: 'en',
     interpolation: {
       escapeValue: false,
     },
   });
+
 export default i18n;

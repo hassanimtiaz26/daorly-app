@@ -4,7 +4,7 @@ import { FC } from 'react';
 
 const ThemedTextInput: FC<TextInputProps> = ({ style, ...props }) => {
   return (
-    <TextInput style={[styles.input, style]} {...props} />
+    <TextInput mode={'outlined'} style={[styles.input, style]} {...props} />
   )
 };
 

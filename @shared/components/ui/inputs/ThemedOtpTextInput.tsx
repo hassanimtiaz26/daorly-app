@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { FC, useCallback, useRef, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -22,7 +22,7 @@ type OtpInputProps = {
   textInputProps?: TextInputProps;
 };
 
-export default function ThemedOtpTextInput({
+const ThemedOtpTextInput: FC<OtpInputProps> = ({
                                    maxLength,
                                    onPinChange,
                                    autoFocus = true,
@@ -33,7 +33,7 @@ export default function ThemedOtpTextInput({
                                    otpBorderColor = '#F6F6F6',
                                    otpBorderFocusedColor = '#6200EE',
                                    textInputProps,
-                                 }: OtpInputProps) {
+                                 }) => {
   const [isInputBoxFocused, setIsInputBoxFocused] =
     useState<boolean>(autoFocus);
   const [otp, setOtp] = useState<string>('');
@@ -156,3 +156,5 @@ const defaultStyles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+
+export default ThemedOtpTextInput;

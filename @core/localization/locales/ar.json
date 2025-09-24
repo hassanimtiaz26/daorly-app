@@ -1,6 +1,26 @@
 {
   "general": {
     "welcome": "اهلا بك في دورلي",
-    "logout": "Logout"
+    "phoneNumber": "رقم الجوال",
+    "password": "كلمة السر",
+    "continue": "متابعة",
+    "continueAsBusiness": "Continue as a Business Provider",
+    "logout": "Logout",
+    "signUp": "انشاء حساب جديد",
+    "signIn": "Sign In"
+  },
+  "auth": {
+    "login": {
+      "haveAccount": "ليس يديك حساب ؟",
+      "errors": {
+        "invalidPhoneNumber": "رقم الهاتف غير صالح"
+      }
+    },
+    "register": {
+      "haveAccount": "Already have an account?",
+      "errors": {
+        "invalidPhoneNumber": "Invalid phone number"
+      }
+    }
   }
 }
