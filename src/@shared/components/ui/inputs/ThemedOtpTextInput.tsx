@@ -8,6 +8,7 @@ import {
 import type { StyleProp, ViewStyle, TextStyle } from 'react-native';
 import { TextInput, Text } from 'react-native-paper';
 import { TextInputProps } from 'react-native-paper';
+import { useAppTheme } from '@core/hooks/useAppTheme';
 
 type OtpInputProps = {
   maxLength: number;
@@ -17,23 +18,20 @@ type OtpInputProps = {
   otpContainerStyle?: StyleProp<ViewStyle>;
   otpBoxStyle?: StyleProp<ViewStyle>;
   otpTextStyle?: StyleProp<TextStyle>;
-  otpBorderColor?: string;
-  otpBorderFocusedColor?: string;
   textInputProps?: TextInputProps;
 };
 
 const ThemedOtpTextInput: FC<OtpInputProps> = ({
-                                   maxLength,
+                                   maxLength = 4,
                                    onPinChange,
                                    autoFocus = true,
                                    containerStyle,
                                    otpContainerStyle,
                                    otpBoxStyle,
                                    otpTextStyle,
-                                   otpBorderColor = '#F6F6F6',
-                                   otpBorderFocusedColor = '#6200EE',
                                    textInputProps,
                                  }) => {
+  const { colors } = useAppTheme();
   const [isInputBoxFocused, setIsInputBoxFocused] =
     useState<boolean>(autoFocus);
   const [otp, setOtp] = useState<string>('');
@@ -111,8 +109,8 @@ const ThemedOtpTextInput: FC<OtpInputProps> = ({
                 ...otpBoxStyleObject,
                 borderColor:
                   isInputBoxFocused && isValueFocused
-                    ? otpBorderFocusedColor
-                    : otpBorderColor,
+                    ? colors.primary
+                    : colors.outline,
               }}
             >
               <Text style={otpTextStyleObject}>{otp[index] || ''}</Text>
@@ -137,17 +135,17 @@ const defaultStyles = StyleSheet.create({
   otpContainer: {
     width: '100%',
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    justifyContent: 'center',
+    gap: 12,
   },
   otpBox: {
-    backgroundColor: '#F6F6F6',
-    borderWidth: 2,
-    borderRadius: 5,
+    borderWidth: 1,
+    borderRadius: 12,
     padding: 12,
-    maxWidth: 45,
-    minWidth: 45,
-    maxHeight: 45,
-    minHeight: 45,
+    maxWidth: 48,
+    minWidth: 48,
+    maxHeight: 48,
+    minHeight: 48,
     justifyContent: 'center',
   },
   otpText: {

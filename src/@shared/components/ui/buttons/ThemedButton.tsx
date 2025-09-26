@@ -25,6 +25,7 @@ const ThemedButton: FC<ButtonProps & AdditionalButtonProps> = ({ children, butto
 const styles = StyleSheet.create({
   button: {
     width: '100%',
+    borderRadius: 14,
   },
   buttonLabel: {
     fontSize: 16,

@@ -7,7 +7,8 @@
     "continueAsBusiness": "Continue as a Business Provider",
     "logout": "Logout",
     "signUp": "انشاء حساب جديد",
-    "signIn": "Sign In"
+    "signIn": "Sign In",
+    "resendCode": "Resend Code"
   },
   "auth": {
     "login": {
@@ -21,6 +22,10 @@
       "errors": {
         "invalidPhoneNumber": "Invalid phone number"
       }
+    },
+    "otp": {
+      "title": "Enter confirmation code",
+      "message": "A 4-digit code was sent to your phone number"
     }
   }
 }

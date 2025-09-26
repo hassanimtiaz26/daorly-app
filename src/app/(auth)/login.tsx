@@ -12,12 +12,13 @@ import { z } from 'zod';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import ThemedInputError from '@components/ui/inputs/ThemedInputError';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import SyriaFlag from '@/assets/icons/syria.svg';
 import ThemedInputPassword from '@components/ui/inputs/ThemedInputPassword';
 import { useFetch } from '@core/hooks/useFetch';
 import * as Device from 'expo-device';
 import { Config } from '@core/constants/Config';
+import OtpVerifyScreen from '@components/ui/screens/OtpVerify';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -55,7 +56,7 @@ const createStyles = (colors: MD3Colors) => StyleSheet.create({
     justifyContent: 'center',
     width: '100%',
     paddingHorizontal: 16,
-    gap: 24,
+    gap: 16,
     marginTop: 'auto',
   },
 });
@@ -67,6 +68,7 @@ export default function LoginScreen() {
   const { colors } = useAppTheme();
   const styles = createStyles(colors);
   const { post, error, loading } = useFetch();
+  const [showOtpScreen, setShowOtpScreen] = useState(true);
 
   const loginSchema = z.object({
     phoneNumber: z.string().trim().regex(syrianPhoneNumberRegex, t('auth.login.errors.invalidPhoneNumber')),
@@ -94,7 +96,7 @@ export default function LoginScreen() {
     const formData = {
       mobile: '+963' + data.phoneNumber.replace(/^0/, ''),
       password: data.password,
-      device_token: 'token',
+      device_token: '', // Firebase token
       operating_system: Device.osName,
       version: Device.osVersion,
       brand: Device.brand,
@@ -110,6 +112,10 @@ export default function LoginScreen() {
         console.log('Login Response', response);
       });
   }, [isValid, post]);
+
+  if (showOtpScreen) {
+    return <OtpVerifyScreen title={'Login'} />;
+  }
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.scrollViewContentContainer}>

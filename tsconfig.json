@@ -7,16 +7,16 @@
         "./*"
       ],
       "@app/*": [
-        "./app/*"
+        "./src/app/*"
       ],
       "@components/*": [
-        "./@shared/components/*"
+        "./src/@shared/components/*"
       ],
       "@core/*": [
-        "./@core/*"
+        "./src/@core/*"
       ],
       "@shared/*": [
-        "./@shared/*"
+        "./src/@shared/*"
       ]
     }
   },

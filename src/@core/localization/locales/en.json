@@ -7,20 +7,25 @@
     "continueAsBusiness": "Continue as a Business Provider",
     "logout": "Logout",
     "signUp": "Sign Up",
-    "signIn": "Sign In"
+    "signIn": "Sign In",
+    "resendCode": "Resend Code"
   },
   "auth": {
     "login": {
       "haveAccount": "Don't have an account?",
       "errors": {
-        "invalidPhoneNumber": "Invalid phone number"
+        "invalidPhoneNumber": "Invalid Phone Number"
       }
     },
     "register": {
       "haveAccount": "Already have an account?",
       "errors": {
-        "invalidPhoneNumber": "Invalid phone number"
+        "invalidPhoneNumber": "Invalid Phone Number"
       }
+    },
+    "otp": {
+      "title": "Enter confirmation code",
+      "message": "A 4-digit code was sent to your phone number"
     }
   }
 }
