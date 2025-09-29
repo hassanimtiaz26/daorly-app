@@ -10,18 +10,19 @@
     "signIn": "Sign In",
     "resendCode": "Resend Code"
   },
+  "errors": {
+    "common": {
+      "invalidPhoneNumber": "رقم الهاتف غير صالح",
+      "passwordsDoNotMatch": "Passwords do not match"
+    }
+  },
   "auth": {
     "login": {
-      "haveAccount": "ليس يديك حساب ؟",
-      "errors": {
-        "invalidPhoneNumber": "رقم الهاتف غير صالح"
-      }
+      "haveAccount": "ليس يديك حساب ؟"
     },
     "register": {
-      "haveAccount": "Already have an account?",
-      "errors": {
-        "invalidPhoneNumber": "Invalid phone number"
-      }
+      "title": "Create Account",
+      "haveAccount": "Already have an account?"
     },
     "otp": {
       "title": "Enter confirmation code",

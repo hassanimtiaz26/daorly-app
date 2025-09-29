@@ -7,10 +7,13 @@ import { BaseTheme } from '@core/config/theme.config';
 import { StyleSheet, View } from 'react-native';
 import { SplashScreen, Stack } from 'expo-router';
 import { useAuthStore } from '@shared/store/useAuthStore';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import '@core/localization/i18n';
 import { MD3Colors } from 'react-native-paper/lib/typescript/types';
 import { useAppTheme } from '@core/hooks/useAppTheme';
+import { checkNotifications, requestNotifications, RESULTS } from 'react-native-permissions';
+import { useFetch } from '@core/hooks/useFetch';
+import { switchMap } from 'rxjs';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -23,16 +26,45 @@ export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require('@/assets/fonts/SpaceMono-Regular.ttf'),
   });
-  const { isLoading, isAuthenticated, setIsLoading } = useAuthStore();
+  const { isLoading, isAuthenticated, setIsLoading, login } = useAuthStore();
 
   const { colors } = useAppTheme();
   const styles = createStyles(colors);
 
+  const { get } = useFetch();
+
   useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 3000)
+    // setTimeout(() => {
+    //   setIsLoading(false);
+    // }, 3000)
+    console.log('isLoading', isLoading);
+    get('auth/get-profile').subscribe({
+      next: (response) => {
+        console.log('getProfile', response);
+      },
+      complete: () => {
+        console.log('getProfile Complete')
+        setIsLoading(false);
+      },
+    })
   }, []);
+
+  // const checkNotificationPermissions = useCallback(async () => {
+  //   const { status } = await checkNotifications();
+  //
+  //   if (status === RESULTS.DENIED || status === RESULTS.LIMITED) {
+  //     const notificationsRequestResult = await requestNotifications([
+  //       'alert',
+  //       'sound',
+  //       'badge',
+  //     ]);
+  //     console.log('notificationsRequestResult', notificationsRequestResult);
+  //   }
+  // }, []);
+  //
+  // useEffect(() => {
+  //   checkNotificationPermissions().then();
+  // }, [checkNotificationPermissions]);
 
   useEffect(() => {
     if (loaded && !isLoading) {

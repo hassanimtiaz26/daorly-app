@@ -7,3 +7,5 @@ export const getResponseError = (error: any): string => {
   }
   return error.message;
 }
+
+export const syrianPhoneNumberRegex = /^(0?(?:93|98|99|94|95|96|91|92|50)\d{7})$/;

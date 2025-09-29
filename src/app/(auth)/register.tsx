@@ -9,6 +9,10 @@ import ThemedButton from '@components/ui/buttons/ThemedButton';
 import { Link } from 'expo-router';
 import SyriaFlag from '@/assets/icons/syria.svg';
 import { useTranslation } from 'react-i18next';
+import { z } from 'zod';
+import { syrianPhoneNumberRegex } from '@core/utils/helpers.util';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -27,8 +31,7 @@ const createStyles = (colors: MD3Colors) => StyleSheet.create({
     paddingTop: 32,
   },
   title: {
-    fontWeight: 'bold',
-    marginBottom: 24,
+    marginBottom: 8,
   },
   logo: {
     width: 200,
@@ -38,6 +41,7 @@ const createStyles = (colors: MD3Colors) => StyleSheet.create({
     width: '100%',
     paddingHorizontal: 16,
     gap: 16,
+    marginTop: 24,
   },
   buttonContainer: {
     flex: 1,
@@ -55,6 +59,24 @@ export default function RegisterScreen() {
   const { colors } = useAppTheme();
   const styles = createStyles(colors);
 
+  const registerSchema = z.object({
+    phoneNumber: z.string().trim().regex(syrianPhoneNumberRegex, t('errors.auth.invalidPhoneNumber')),
+    password: z.string().trim(),
+    confirmPassword: z.string().trim(),
+  }).refine((data) => data.password === data.confirmPassword, {
+    message: t('errors.auth.passwordsDoNotMatch'),
+    path: ['confirmPassword'],
+  })
+  type RegisterFormType = z.infer<typeof registerSchema>;
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isValid },
+    trigger,
+  } = useForm<RegisterFormType>({
+    resolver: zodResolver(registerSchema),
+  });
+
   return (
     // <SafeAreaView style={styles.container}>
       <ScrollView style={styles.container} contentContainerStyle={styles.scrollViewContentContainer}>
@@ -64,6 +86,7 @@ export default function RegisterScreen() {
             contentFit={'contain'}
             source={require('@/assets/images/daorly-logo.png')} />
           <Text style={styles.title} variant={'titleMedium'}>{t('general.welcome')}</Text>
+          <Text variant={'titleLarge'}>{t('auth.register.title')}</Text>
 
           <View style={styles.textInputContainer}>
             <ThemedTextInput

@@ -10,18 +10,19 @@
     "signIn": "Sign In",
     "resendCode": "Resend Code"
   },
+  "errors": {
+    "auth": {
+      "invalidPhoneNumber": "Invalid Phone Number",
+      "passwordsDoNotMatch": "Passwords do not match"
+    }
+  },
   "auth": {
     "login": {
-      "haveAccount": "Don't have an account?",
-      "errors": {
-        "invalidPhoneNumber": "Invalid Phone Number"
-      }
+      "haveAccount": "Don't have an account?"
     },
     "register": {
-      "haveAccount": "Already have an account?",
-      "errors": {
-        "invalidPhoneNumber": "Invalid Phone Number"
-      }
+      "title": "Create Account",
+      "haveAccount": "Already have an account?"
     },
     "otp": {
       "title": "Enter confirmation code",

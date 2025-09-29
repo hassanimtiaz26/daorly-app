@@ -1,17 +1,20 @@
 {
   "expo": {
-    "name": "daorly",
+    "name": "Daorly",
     "slug": "daorly",
     "version": "0.1.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/daorly-icon.png",
     "scheme": "daorly",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "googleServicesFile": "./GoogleService-Info.plist",
       "supportsTablet": true,
-      "bundleIdentifier": "com.sourcecode.daorly"
+      "bundleIdentifier": "com.sourcecode.daorly",
+      "infoPlist": {
+        "iosPermissions": []
+      }
     },
     "android": {
       "googleServicesFile": "./google-services.json",
@@ -21,7 +24,10 @@
       },
       "edgeToEdgeEnabled": true,
       "package": "com.sourcecode.daorly",
-      "versionCode": 1
+      "versionCode": 1,
+      "permissions": [
+        "android.permission.POST_NOTIFICATIONS"
+      ]
     },
     "plugins": [
       "expo-router",
@@ -56,6 +62,14 @@
           "ios": {
             "useFrameworks": "static"
           }
+        }
+      ],
+      [
+        "react-native-permissions",
+        {
+          "iosPermissions": [
+            "NOTIFICATIONS"
+          ]
         }
       ]
     ],

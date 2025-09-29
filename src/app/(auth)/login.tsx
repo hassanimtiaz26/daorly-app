@@ -19,6 +19,7 @@ import { useFetch } from '@core/hooks/useFetch';
 import * as Device from 'expo-device';
 import { Config } from '@core/constants/Config';
 import OtpVerifyScreen from '@components/ui/screens/OtpVerify';
+import { syrianPhoneNumberRegex } from '@core/utils/helpers.util';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -39,7 +40,6 @@ const createStyles = (colors: MD3Colors) => StyleSheet.create({
   },
   title: {
     fontWeight: 'bold',
-    marginBottom: 24,
   },
   logo: {
     width: 200,
@@ -49,6 +49,7 @@ const createStyles = (colors: MD3Colors) => StyleSheet.create({
     width: '100%',
     paddingHorizontal: 16,
     gap: 16,
+    marginTop: 24,
   },
   buttonContainer: {
     flex: 1,
@@ -61,17 +62,15 @@ const createStyles = (colors: MD3Colors) => StyleSheet.create({
   },
 });
 
-const syrianPhoneNumberRegex = /^(0?(?:93|98|99|94|95|96|91|92|50)\d{7})$/;
-
 export default function LoginScreen() {
   const { t } = useTranslation();
   const { colors } = useAppTheme();
   const styles = createStyles(colors);
   const { post, error, loading } = useFetch();
-  const [showOtpScreen, setShowOtpScreen] = useState(true);
+  const [showOtpScreen, setShowOtpScreen] = useState(false);
 
   const loginSchema = z.object({
-    phoneNumber: z.string().trim().regex(syrianPhoneNumberRegex, t('auth.login.errors.invalidPhoneNumber')),
+    phoneNumber: z.string().trim().regex(syrianPhoneNumberRegex, t('errors.auth.invalidPhoneNumber')),
     password: z.string().trim(),
   });
   type LoginFormType = z.infer<typeof loginSchema>;
@@ -84,9 +83,9 @@ export default function LoginScreen() {
     resolver: zodResolver(loginSchema),
   });
 
-  useEffect(() => {
-    console.log(error);
-  }, [error]);
+  // useEffect(() => {
+  //   console.log(error);
+  // }, [error]);
 
   const handleTextChange = useCallback((inputControl: any) => {
     trigger(inputControl).then();
@@ -124,7 +123,7 @@ export default function LoginScreen() {
           style={styles.logo}
           contentFit={'contain'}
           source={require('@/assets/images/daorly-logo.png')} />
-        <Text style={styles.title} variant={'titleMedium'}>{t('general.welcome')}</Text>
+        <Text variant={'titleMedium'}>{t('general.welcome')}</Text>
         <View style={styles.textInputContainer}>
           <Controller
             control={control}
