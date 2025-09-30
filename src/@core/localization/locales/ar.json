@@ -3,12 +3,20 @@
     "welcome": "اهلا بك في دورلي",
     "phoneNumber": "رقم الجوال",
     "password": "كلمة السر",
+    "confirmPassword": "Confirm Password",
     "continue": "متابعة",
     "continueAsBusiness": "Continue as a Business Provider",
     "logout": "Logout",
     "signUp": "انشاء حساب جديد",
     "signIn": "Sign In",
-    "resendCode": "Resend Code"
+    "resendCode": "Resend Code",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "syria": "سوريا",
+    "country": "Country",
+    "city": "City",
+    "area": "Area",
+    "address": "Address"
   },
   "errors": {
     "common": {

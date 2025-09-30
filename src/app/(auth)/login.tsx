@@ -67,7 +67,6 @@ export default function LoginScreen() {
   const { colors } = useAppTheme();
   const styles = createStyles(colors);
   const { post, error, loading } = useFetch();
-  const [showOtpScreen, setShowOtpScreen] = useState(false);
 
   const loginSchema = z.object({
     phoneNumber: z.string().trim().regex(syrianPhoneNumberRegex, t('errors.auth.invalidPhoneNumber')),
@@ -111,10 +110,6 @@ export default function LoginScreen() {
         console.log('Login Response', response);
       });
   }, [isValid, post]);
-
-  if (showOtpScreen) {
-    return <OtpVerifyScreen title={'Login'} />;
-  }
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.scrollViewContentContainer}>

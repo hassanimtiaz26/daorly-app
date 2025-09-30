@@ -14,6 +14,7 @@ import { useAppTheme } from '@core/hooks/useAppTheme';
 import { checkNotifications, requestNotifications, RESULTS } from 'react-native-permissions';
 import { useFetch } from '@core/hooks/useFetch';
 import { switchMap } from 'rxjs';
+import ThemedSplashScreen from '@components/ui/screens/Splash';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -37,7 +38,7 @@ export default function RootLayout() {
     // setTimeout(() => {
     //   setIsLoading(false);
     // }, 3000)
-    console.log('isLoading', isLoading);
+    // console.log('isLoading', isLoading);
     get('auth/get-profile').subscribe({
       next: (response) => {
         console.log('getProfile', response);
@@ -67,15 +68,16 @@ export default function RootLayout() {
   // }, [checkNotificationPermissions]);
 
   useEffect(() => {
+    // console.log('loaded', loaded, 'isLoading', isLoading);
     if (loaded && !isLoading) {
       SplashScreen.hideAsync();
     }
   }, [loaded, isLoading]);
 
 
-  if (!loaded && isLoading) {
+  if (!loaded || isLoading) {
     // Async font loading only occurs in development.
-    return null;
+    return <ThemedSplashScreen />;
   }
 
   return (

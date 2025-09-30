@@ -13,6 +13,7 @@ const ThemedInputPassword: FC<TextInputProps> = ({ style, ...props }) => {
   return (
     <ThemedTextInput
       secureTextEntry={hidden}
+      autoCapitalize={'none'}
       right={
         <TextInput.Icon
           onPress={toggleHidden}

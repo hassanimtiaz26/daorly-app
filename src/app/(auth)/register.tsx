@@ -6,13 +6,22 @@ import { useAppTheme } from '@core/hooks/useAppTheme';
 import { Image } from 'expo-image';
 import ThemedTextInput from '@components/ui/inputs/ThemedTextInput';
 import ThemedButton from '@components/ui/buttons/ThemedButton';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import SyriaFlag from '@/assets/icons/syria.svg';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
 import { syrianPhoneNumberRegex } from '@core/utils/helpers.util';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import ThemedInputPassword from '@components/ui/inputs/ThemedInputPassword';
+import OtpVerifyScreen from '@components/ui/screens/OtpVerify';
+import { useCallback, useState } from 'react';
+import ThemedInputError from '@components/ui/inputs/ThemedInputError';
+import { useFetch } from '@core/hooks/useFetch';
+import * as Device from 'expo-device';
+import { Config } from '@core/constants/Config';
+import { useAuthStore } from '@shared/store/useAuthStore';
+import { useFirebase } from '@core/hooks/useFirebase';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -57,7 +66,13 @@ const createStyles = (colors: MD3Colors) => StyleSheet.create({
 export default function RegisterScreen() {
   const { t } = useTranslation();
   const { colors } = useAppTheme();
+  const router = useRouter();
   const styles = createStyles(colors);
+  const [showOtpScreen, setShowOtpScreen] = useState(false);
+
+  const { post, loading } = useFetch();
+  const { setUser } = useAuthStore();
+  const { firebaseToken } = useFirebase();
 
   const registerSchema = z.object({
     phoneNumber: z.string().trim().regex(syrianPhoneNumberRegex, t('errors.auth.invalidPhoneNumber')),
@@ -77,6 +92,46 @@ export default function RegisterScreen() {
     resolver: zodResolver(registerSchema),
   });
 
+  const handleTextChange = useCallback((inputControl: any) => {
+    trigger(inputControl).then();
+  }, [trigger]);
+
+  const onSubmit = useCallback((data: RegisterFormType) => {
+    const formData = {
+      mobile: '+963' + data.phoneNumber.replace(/^0/, ''),
+      password: data.password,
+      as_provider: false,
+      device_token: firebaseToken, // Firebase token
+      operating_system: Device.osName,
+      version: Device.osVersion,
+      brand: Device.brand,
+      type: Device.deviceType,
+      model: Device.modelName,
+      app_version: Config.appVersion,
+    }
+
+    console.log(JSON.stringify(formData, null, 2));
+
+    post('auth/register', formData)
+      .subscribe({
+        next: (response) => {
+          console.log('Register Response', response);
+          if (response.user) {
+            setShowOtpScreen(true);
+            setUser(response.user);
+          }
+        }
+      });
+  }, [isValid, post]);
+
+  const onOtpSubmit = useCallback((otp: string) => {
+    // router.navigate('/(auth)/profile');
+  }, [router]);
+
+  if (showOtpScreen) {
+    return <OtpVerifyScreen onSubmit={onOtpSubmit} title={t('auth.register.title')} />;
+  }
+
   return (
     // <SafeAreaView style={styles.container}>
       <ScrollView style={styles.container} contentContainerStyle={styles.scrollViewContentContainer}>
@@ -89,40 +144,94 @@ export default function RegisterScreen() {
           <Text variant={'titleLarge'}>{t('auth.register.title')}</Text>
 
           <View style={styles.textInputContainer}>
-            <ThemedTextInput
-              label={t('general.phoneNumber')}
-              left={<TextInput.Icon
-                size={34}
-                icon={({ size, color }) => (
-                  <SyriaFlag width={size} height={size} fill={color} />
-                )}
-              />}
-              right={<TextInput.Icon size={18} icon={'phone'} />} />
+            <Controller
+              control={control}
+              name={'phoneNumber'}
+              render={({
+                         field: { onChange, onBlur, value },
+                         fieldState: { error },
+                       }) => (
+                <View>
+                  <ThemedTextInput
+                    onBlur={onBlur}
+                    onChangeText={(e) => {
+                      onChange(e);
+                      handleTextChange('phoneNumber');
+                    }}
+                    value={value}
+                    error={!!error}
+                    label={t('general.phoneNumber')}
+                    left={<TextInput.Icon
+                      size={34}
+                      icon={({ size, color }) => (
+                        <SyriaFlag width={size} height={size} fill={color} />
+                      )}
+                    />}
+                    right={<TextInput.Icon size={18} icon={'phone'} />} />
+                  {errors.phoneNumber && (
+                    <ThemedInputError text={errors.phoneNumber?.message} />
+                  )}
+                </View>
+                )} />
 
-            <ThemedTextInput
-              mode={'outlined'}
-              secureTextEntry={true}
-              autoCapitalize="none"
-              label={'Password'}
-              right={<TextInput.Icon size={18} icon={'eye'} />} />
+            <Controller
+              control={control}
+              name={'password'}
+              render={({
+                         field: { onChange, onBlur, value },
+                         fieldState: { error },
+                       }) => (
+                <View>
+                  <ThemedInputPassword
+                    onBlur={onBlur}
+                    onChangeText={(e) => {
+                      onChange(e);
+                      handleTextChange('password');
+                    }}
+                    value={value}
+                    error={!!error}
+                    label={t('general.password')} />
+                  {errors.password && (
+                    <ThemedInputError text={errors.password?.message} />
+                  )}
+                </View>
+              )} />
 
-            <ThemedTextInput
-              mode={'outlined'}
-              secureTextEntry={true}
-              autoCapitalize="none"
-              label={'Confirm Password'}
-              right={<TextInput.Icon size={18} icon={'eye'} />} />
+            <Controller
+              control={control}
+              name={'confirmPassword'}
+              render={({
+                         field: { onChange, onBlur, value },
+                         fieldState: { error },
+                       }) => (
+                <View>
+                  <ThemedInputPassword
+                    onBlur={onBlur}
+                    onChangeText={(e) => {
+                      onChange(e);
+                      handleTextChange('confirmPassword');
+                    }}
+                    value={value}
+                    error={!!error}
+                    label={t('general.confirmPassword')} />
+                  {errors.confirmPassword && (
+                    <ThemedInputError text={errors.confirmPassword?.message} />
+                  )}
+                </View>
+              )} />
           </View>
         </View>
 
         <View style={styles.buttonContainer}>
           <ThemedButton
-            onPress={() => {}}
+            disabled={!isValid || loading}
+            loading={loading}
+            onPress={handleSubmit(onSubmit)}
             buttonStyle={'secondary'}>{t('general.continue')}</ThemedButton>
 
-          <ThemedButton
+          {/*<ThemedButton
             onPress={() => {}}
-            mode={'contained'}>{t('general.continueAsBusiness')}</ThemedButton>
+            mode={'contained'}>{t('general.continueAsBusiness')}</ThemedButton>*/}
 
           <Link href={'../'}>
             <Text>{t('auth.register.haveAccount')} <Text style={{ color: colors.secondary }}>{t('general.signIn')}</Text></Text>

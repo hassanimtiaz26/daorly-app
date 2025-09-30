@@ -3,12 +3,20 @@
     "welcome": "Welcome to Daorly!",
     "phoneNumber": "Phone Number",
     "password": "Password",
+    "confirmPassword": "Confirm Password",
     "continue": "Continue",
     "continueAsBusiness": "Continue as a Business Provider",
     "logout": "Logout",
     "signUp": "Sign Up",
     "signIn": "Sign In",
-    "resendCode": "Resend Code"
+    "resendCode": "Resend Code",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "syria": "Syria",
+    "country": "Country",
+    "city": "City",
+    "area": "Area",
+    "address": "Address"
   },
   "errors": {
     "auth": {

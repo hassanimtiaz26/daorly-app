@@ -10,7 +10,7 @@ import ThemedButton from '@components/ui/buttons/ThemedButton';
 import { Link } from 'expo-router';
 
 type OtpVerifyScreenProps = {
-  callback?: () => void;
+  onSubmit: (data: string) => void;
   title?: string;
 };
 
@@ -54,7 +54,7 @@ const createStyles = (colors: MD3Colors) => StyleSheet.create({
   },
 });
 
-const OtpVerifyScreen: FC<OtpVerifyScreenProps> = ({ callback, title }) => {
+const OtpVerifyScreen: FC<OtpVerifyScreenProps> = ({ onSubmit, title }) => {
   const { t } = useTranslation();
   const { colors } = useAppTheme();
   const styles = createStyles(colors);
@@ -66,6 +66,7 @@ const OtpVerifyScreen: FC<OtpVerifyScreenProps> = ({ callback, title }) => {
 
   const handleSubmit = useCallback(() => {
     console.log(otp);
+    onSubmit(otp);
   }, [otp]);
 
   const handleResend = useCallback(() => {
