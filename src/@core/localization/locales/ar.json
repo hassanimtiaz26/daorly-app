@@ -16,17 +16,21 @@
     "country": "Country",
     "city": "City",
     "area": "Area",
-    "address": "Address"
+    "address": "Address",
+    "services": "Services",
+    "viewAll": "View All"
   },
   "errors": {
     "common": {
       "invalidPhoneNumber": "رقم الهاتف غير صالح",
-      "passwordsDoNotMatch": "Passwords do not match"
+      "passwordsDoNotMatch": "Passwords do not match",
+      "passwordMinLength": "Password must be at least 8 characters"
     }
   },
   "auth": {
     "login": {
-      "haveAccount": "ليس يديك حساب ؟"
+      "haveAccount": "ليس يديك حساب ؟",
+      "otpTitle": "Account Confirmation"
     },
     "register": {
       "title": "Create Account",

@@ -39,7 +39,7 @@ export const BaseTheme: ThemeConfig = {
     onErrorContainer: 'rgb(65, 14, 11)',
 
     // Background and surface colors
-    background: 'rgb(255, 255, 255)',
+    background: 'rgb(245, 247, 249)',
     onBackground: 'rgb(27, 27, 30)',
     surface: 'rgb(255, 255, 255)',
     onSurface: 'rgb(27, 27, 30)',

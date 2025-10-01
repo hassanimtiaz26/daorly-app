@@ -15,13 +15,14 @@ import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import ThemedInputPassword from '@components/ui/inputs/ThemedInputPassword';
 import OtpVerifyScreen from '@components/ui/screens/OtpVerify';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import ThemedInputError from '@components/ui/inputs/ThemedInputError';
 import { useFetch } from '@core/hooks/useFetch';
 import * as Device from 'expo-device';
 import { Config } from '@core/constants/Config';
 import { useAuthStore } from '@shared/store/useAuthStore';
 import { useFirebase } from '@core/hooks/useFirebase';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -66,9 +67,10 @@ const createStyles = (colors: MD3Colors) => StyleSheet.create({
 export default function RegisterScreen() {
   const { t } = useTranslation();
   const { colors } = useAppTheme();
-  const router = useRouter();
+  const { navigate } = useRouter();
   const styles = createStyles(colors);
   const [showOtpScreen, setShowOtpScreen] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState('');
 
   const { post, loading } = useFetch();
   const { setUser } = useAuthStore();
@@ -76,7 +78,7 @@ export default function RegisterScreen() {
 
   const registerSchema = z.object({
     phoneNumber: z.string().trim().regex(syrianPhoneNumberRegex, t('errors.auth.invalidPhoneNumber')),
-    password: z.string().trim(),
+    password: z.string().trim().min(8, t('errors.auth.passwordMinLength')),
     confirmPassword: z.string().trim(),
   }).refine((data) => data.password === data.confirmPassword, {
     message: t('errors.auth.passwordsDoNotMatch'),
@@ -92,20 +94,27 @@ export default function RegisterScreen() {
     resolver: zodResolver(registerSchema),
   });
 
+  const { login } = useAuthStore();
+
   const handleTextChange = useCallback((inputControl: any) => {
     trigger(inputControl).then();
   }, [trigger]);
 
   const onSubmit = useCallback((data: RegisterFormType) => {
+    if (!isValid) return;
+
+    const number = '+963' + data.phoneNumber.replace(/^0/, '');
+    setPhoneNumber(number);
+
     const formData = {
-      mobile: '+963' + data.phoneNumber.replace(/^0/, ''),
+      mobile: number,
       password: data.password,
       as_provider: false,
       device_token: firebaseToken, // Firebase token
       operating_system: Device.osName,
       version: Device.osVersion,
       brand: Device.brand,
-      type: Device.deviceType,
+      type: Device.deviceType?.toString(),
       model: Device.modelName,
       app_version: Config.appVersion,
     }
@@ -116,20 +125,42 @@ export default function RegisterScreen() {
       .subscribe({
         next: (response) => {
           console.log('Register Response', response);
-          if (response.user) {
+          if (response && 'data' in response) {
             setShowOtpScreen(true);
-            setUser(response.user);
+            setUser(response.data.user);
           }
         }
       });
-  }, [isValid, post]);
+  }, [isValid, post, firebaseToken]);
 
   const onOtpSubmit = useCallback((otp: string) => {
-    // router.navigate('/(auth)/profile');
-  }, [router]);
+    const formData = {
+      mobile: phoneNumber,
+      code: otp,
+      device_token: firebaseToken,
+      type: 'account_confirmation'
+    }
+    post('auth/confirm-code', formData)
+      .subscribe({
+        next: async (response) => {
+          if (response && 'data' in response) {
+            const data = response.data;
+            if ('user' in data && 'token' in data) {
+              await AsyncStorage.setItem(Config.tokenStoreKey, data.token);
+              login(data.user);
+              navigate('/(app)/(tabs)/home');
+            }
+          }
+        }
+      })
+  }, [navigate, post, phoneNumber, firebaseToken]);
 
   if (showOtpScreen) {
-    return <OtpVerifyScreen onSubmit={onOtpSubmit} title={t('auth.register.title')} />;
+    return <OtpVerifyScreen
+      type={'accountConfirmation'}
+      onSubmit={onOtpSubmit}
+      title={t('auth.register.title')}
+      loading={loading} />;
   }
 
   return (

@@ -6,7 +6,7 @@ import { MD3Colors } from 'react-native-paper/lib/typescript/types';
 import ThemedButton from '@components/ui/buttons/ThemedButton';
 import ThemedTextInput from '@components/ui/inputs/ThemedTextInput';
 import { useAppTheme } from '@core/hooks/useAppTheme';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
 import { Controller, useForm } from 'react-hook-form';
@@ -20,6 +20,9 @@ import * as Device from 'expo-device';
 import { Config } from '@core/constants/Config';
 import OtpVerifyScreen from '@components/ui/screens/OtpVerify';
 import { syrianPhoneNumberRegex } from '@core/utils/helpers.util';
+import { useFirebase } from '@core/hooks/useFirebase';
+import { useAuthStore } from '@shared/store/useAuthStore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -66,7 +69,15 @@ export default function LoginScreen() {
   const { t } = useTranslation();
   const { colors } = useAppTheme();
   const styles = createStyles(colors);
-  const { post, error, loading } = useFetch();
+
+  const { post, error, loading, statusCode } = useFetch();
+  const { firebaseToken } = useFirebase();
+  const { navigate } = useRouter();
+
+  const { login } = useAuthStore();
+
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [showOtpScreen, setShowOtpScreen] = useState(false);
 
   const loginSchema = z.object({
     phoneNumber: z.string().trim().regex(syrianPhoneNumberRegex, t('errors.auth.invalidPhoneNumber')),
@@ -82,23 +93,41 @@ export default function LoginScreen() {
     resolver: zodResolver(loginSchema),
   });
 
-  // useEffect(() => {
-  //   console.log(error);
-  // }, [error]);
+  useEffect(() => {
+    console.log(error);
+  }, [error]);
+
+  useEffect(() => {
+    console.log('useEffect:statusCode', statusCode);
+    if (statusCode === 400) {
+      setShowOtpScreen(true);
+    }
+  }, [statusCode]);
 
   const handleTextChange = useCallback((inputControl: any) => {
     trigger(inputControl).then();
   }, [trigger]);
 
+  const handleLogin = useCallback(async (data: any) => {
+    await AsyncStorage.setItem(Config.tokenStoreKey, data.token);
+    login(data.user);
+    navigate('/(app)/(tabs)/home');
+  }, [navigate, login]);
+
   const onSubmit = useCallback((data: LoginFormType) => {
+    if (!isValid) return;
+
+    const number = '+963' + data.phoneNumber.replace(/^0/, '');
+    setPhoneNumber(number);
+
     const formData = {
-      mobile: '+963' + data.phoneNumber.replace(/^0/, ''),
+      mobile: number,
       password: data.password,
-      device_token: '', // Firebase token
+      device_token: firebaseToken,
       operating_system: Device.osName,
       version: Device.osVersion,
       brand: Device.brand,
-      type: Device.deviceType,
+      type: Device.deviceType?.toString(),
       model: Device.modelName,
       app_version: Config.appVersion,
     }
@@ -106,10 +135,47 @@ export default function LoginScreen() {
     console.log(JSON.stringify(formData, null, 2));
 
     post('auth/login', formData)
-      .subscribe((response) => {
-        console.log('Login Response', response);
+      .subscribe({
+        next: async (response) => {
+          console.log('Login Response', response);
+          console.log('next:statusCode', statusCode);
+          if (response && 'data' in response) {
+            await handleLogin(response.data);
+          }
+        },
+        error: (err) => {
+          console.log('err:statusCode', statusCode);
+          console.log('Login Error', err);
+        }
       });
-  }, [isValid, post]);
+  }, [isValid, handleLogin, post, firebaseToken, statusCode]);
+
+  const onOtpSubmit = useCallback((otp: string) => {
+    const formData = {
+      mobile: phoneNumber,
+      code: otp,
+      device_token: firebaseToken,
+      type: 'account_confirmation'
+    }
+    post('auth/confirm-code', formData)
+      .subscribe({
+        next: async (response) => {
+          if (response && 'data' in response) {
+            await handleLogin(response.data);
+          }
+        }
+      })
+  }, [handleLogin, post, phoneNumber, firebaseToken]);
+
+  if (showOtpScreen) {
+    return (
+      <OtpVerifyScreen
+        type={'accountConfirmation'}
+        title={t('auth.login.otpTitle')}
+        loading={loading}
+        onSubmit={onOtpSubmit} />
+    );
+  }
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.scrollViewContentContainer}>

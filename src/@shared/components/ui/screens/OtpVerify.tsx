@@ -12,6 +12,8 @@ import { Link } from 'expo-router';
 type OtpVerifyScreenProps = {
   onSubmit: (data: string) => void;
   title?: string;
+  loading?: boolean;
+  type: 'accountConfirmation' | 'forgetPassword' | 'changeMobile';
 };
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
@@ -54,14 +56,16 @@ const createStyles = (colors: MD3Colors) => StyleSheet.create({
   },
 });
 
-const OtpVerifyScreen: FC<OtpVerifyScreenProps> = ({ onSubmit, title }) => {
+const OtpVerifyScreen: FC<OtpVerifyScreenProps> = ({ onSubmit, title, loading, type }) => {
   const { t } = useTranslation();
   const { colors } = useAppTheme();
   const styles = createStyles(colors);
   const [otp, setOtp] = useState('');
+  const [isValid, setIsValid] = useState(false);
 
   const handleOtpChange = useCallback((otp: string) => {
     setOtp(otp);
+    setIsValid(otp.length === 4);
   }, []);
 
   const handleSubmit = useCallback(() => {
@@ -97,8 +101,8 @@ const OtpVerifyScreen: FC<OtpVerifyScreenProps> = ({ onSubmit, title }) => {
           mode={'contained'}>{t('general.resendCode')}</ThemedButton>
 
         <ThemedButton
-          // disabled={!isValid || loading}
-          // loading={loading}
+          disabled={!isValid || loading}
+          loading={loading}
           onPress={handleSubmit}
           mode={'contained'}
           buttonStyle={'secondary'}>{t('general.continue')}</ThemedButton>

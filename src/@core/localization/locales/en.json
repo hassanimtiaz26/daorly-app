@@ -16,17 +16,21 @@
     "country": "Country",
     "city": "City",
     "area": "Area",
-    "address": "Address"
+    "address": "Address",
+    "services": "Services",
+    "viewAll": "View All"
   },
   "errors": {
     "auth": {
       "invalidPhoneNumber": "Invalid Phone Number",
-      "passwordsDoNotMatch": "Passwords do not match"
+      "passwordsDoNotMatch": "Passwords do not match",
+      "passwordMinLength": "Password must be at least 8 characters"
     }
   },
   "auth": {
     "login": {
-      "haveAccount": "Don't have an account?"
+      "haveAccount": "Don't have an account?",
+      "otpTitle": "Account Confirmation"
     },
     "register": {
       "title": "Create Account",

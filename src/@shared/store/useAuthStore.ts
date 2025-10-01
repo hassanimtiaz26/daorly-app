@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { useFetch } from '@core/hooks/useFetch';
 import { firstValueFrom, Observable, switchMap } from 'rxjs';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Config } from '@core/constants/Config';
 
 type AuthState = {
   isLoading: boolean;
@@ -28,7 +30,12 @@ export const useAuthStore = create<AuthState>((set) => ({
     );
   },
   login: (user: any) => set({ isAuthenticated: true, user }),
-  logout: () => set({ isAuthenticated: false, user: null }),
+  logout: () => {
+    AsyncStorage.removeItem(Config.tokenStoreKey)
+      .then(() => {
+        set({ isAuthenticated: false, user: null });
+      });
+  },
   setUser: (user: any) => set((state) => ({ user: { ...state.user, ...user } })),
   setIsLoading: (isLoading: boolean) => set({ isLoading }),
 }));

@@ -71,7 +71,8 @@
             "NOTIFICATIONS"
           ]
         }
-      ]
+      ],
+      "expo-dev-client"
     ],
     "experiments": {
       "typedRoutes": true

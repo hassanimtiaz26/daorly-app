@@ -15,6 +15,7 @@ export const useFirebase = () => {
           try {
             await messaging().requestPermission()
             const fcmToken = await messaging().getToken();
+            await AsyncStorage.setItem(Config.firebaseTokenStoreKey, fcmToken);
             setFirebaseToken(fcmToken);
           } catch (e) {
             console.error('Firebase permission error', e);

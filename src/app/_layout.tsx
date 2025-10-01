@@ -5,7 +5,7 @@ import { PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { BaseTheme } from '@core/config/theme.config';
 import { StyleSheet, View } from 'react-native';
-import { SplashScreen, Stack } from 'expo-router';
+import { SplashScreen, Stack, useSegments } from 'expo-router';
 import { useAuthStore } from '@shared/store/useAuthStore';
 import { useCallback, useEffect } from 'react';
 import '@core/localization/i18n';
@@ -15,6 +15,7 @@ import { checkNotifications, requestNotifications, RESULTS } from 'react-native-
 import { useFetch } from '@core/hooks/useFetch';
 import { switchMap } from 'rxjs';
 import ThemedSplashScreen from '@components/ui/screens/Splash';
+import { useFirebase } from '@core/hooks/useFirebase';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -28,11 +29,18 @@ export default function RootLayout() {
     SpaceMono: require('@/assets/fonts/SpaceMono-Regular.ttf'),
   });
   const { isLoading, isAuthenticated, setIsLoading, login } = useAuthStore();
+  const segments = useSegments();
 
   const { colors } = useAppTheme();
   const styles = createStyles(colors);
 
+  const { firebaseToken } = useFirebase();
+
   const { get } = useFetch();
+
+  useEffect(() => {
+    console.log('Current route segments:', segments);
+  }, [segments]);
 
   useEffect(() => {
     // setTimeout(() => {
@@ -42,6 +50,11 @@ export default function RootLayout() {
     get('auth/get-profile').subscribe({
       next: (response) => {
         console.log('getProfile', response);
+        if (response && 'data' in response) {
+          if ('user' in response.data) {
+            login(response.data.user);
+          }
+        }
       },
       complete: () => {
         console.log('getProfile Complete')
@@ -50,22 +63,26 @@ export default function RootLayout() {
     })
   }, []);
 
-  // const checkNotificationPermissions = useCallback(async () => {
-  //   const { status } = await checkNotifications();
-  //
-  //   if (status === RESULTS.DENIED || status === RESULTS.LIMITED) {
-  //     const notificationsRequestResult = await requestNotifications([
-  //       'alert',
-  //       'sound',
-  //       'badge',
-  //     ]);
-  //     console.log('notificationsRequestResult', notificationsRequestResult);
-  //   }
-  // }, []);
-  //
-  // useEffect(() => {
-  //   checkNotificationPermissions().then();
-  // }, [checkNotificationPermissions]);
+  useEffect(() => {
+    console.log('Firebase Token:', firebaseToken);
+  }, [firebaseToken]);
+
+  const checkNotificationPermissions = useCallback(async () => {
+    const { status } = await checkNotifications();
+
+    if (status === RESULTS.DENIED || status === RESULTS.LIMITED) {
+      const notificationsRequestResult = await requestNotifications([
+        'alert',
+        'sound',
+        'badge',
+      ]);
+      console.log('notificationsRequestResult', notificationsRequestResult);
+    }
+  }, []);
+
+  useEffect(() => {
+    checkNotificationPermissions().then();
+  }, [checkNotificationPermissions]);
 
   useEffect(() => {
     // console.log('loaded', loaded, 'isLoading', isLoading);
@@ -83,21 +100,17 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <PaperProvider theme={BaseTheme}>
-        <SafeAreaView style={styles.container}>
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Protected guard={!isAuthenticated}>
-              <Stack.Screen name="(auth)" />
-            </Stack.Protected>
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Protected guard={!isAuthenticated}>
+            <Stack.Screen name="(auth)" />
+          </Stack.Protected>
 
-            <Stack.Protected guard={isAuthenticated}>
-              <Stack.Screen name="(app)" />
-            </Stack.Protected>
+          <Stack.Protected guard={isAuthenticated}>
+            <Stack.Screen name="(app)" />
+          </Stack.Protected>
 
-            <Stack.Screen name="+not-found" />
-          </Stack>
-          <StatusBar
-            style="dark" />
-        </SafeAreaView>
+          <Stack.Screen name="+not-found" />
+        </Stack>
       </PaperProvider>
     </SafeAreaProvider>
   );

@@ -117,6 +117,31 @@ const CompleteProfile = () => {
               )}
             />} />
 
+          <ThemedTextInput
+            readOnly={true}
+            label={t('general.city')}
+            right={<TextInput.Icon
+              icon={({ size, color }) => (
+                <Feather name="chevron-down" size={size} color={color} />
+              )}
+            />} />
+
+          <ThemedTextInput
+            readOnly={true}
+            label={t('general.area')}
+            right={<TextInput.Icon
+              icon={({ size, color }) => (
+                <Feather name="chevron-down" size={size} color={color} />
+              )}
+            />} />
+
+          <ThemedTextInput
+            label={t('general.address')}
+            right={<TextInput.Icon
+              icon={({ size, color }) => (
+                <Feather name="map-pin" size={size} color={color} />
+              )}
+            />} />
         </View>
       </View>
 
