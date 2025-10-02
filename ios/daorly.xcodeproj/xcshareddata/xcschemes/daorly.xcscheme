@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "daorly.app"
-               BlueprintName = "daorly"
-               ReferencedContainer = "container:daorly.xcodeproj">
+               BuildableName = "Daorly.app"
+               BlueprintName = "Daorly"
+               ReferencedContainer = "container:Daorly.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "daorlyTests.xctest"
-               BlueprintName = "daorlyTests"
-               ReferencedContainer = "container:daorly.xcodeproj">
+               BuildableName = "DaorlyTests.xctest"
+               BlueprintName = "DaorlyTests"
+               ReferencedContainer = "container:Daorly.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "daorly.app"
-            BlueprintName = "daorly"
-            ReferencedContainer = "container:daorly.xcodeproj">
+            BuildableName = "Daorly.app"
+            BlueprintName = "Daorly"
+            ReferencedContainer = "container:Daorly.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "daorly.app"
-            BlueprintName = "daorly"
-            ReferencedContainer = "container:daorly.xcodeproj">
+            BuildableName = "Daorly.app"
+            BlueprintName = "Daorly"
+            ReferencedContainer = "container:Daorly.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
