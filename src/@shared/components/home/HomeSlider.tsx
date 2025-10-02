@@ -1,6 +1,6 @@
 import { FC, useRef } from 'react';
 import { Dimensions, ScrollView, View } from 'react-native';
-import Carousel from 'react-native-reanimated-carousel/src/components/Carousel';
+import Carousel from 'react-native-reanimated-carousel';
 import { ICarouselInstance } from 'react-native-reanimated-carousel';
 import { useSharedValue } from 'react-native-reanimated';
 import { Image } from 'expo-image';
@@ -42,7 +42,7 @@ const HomeSlider: FC<Props> = ({ data }) => {
             justifyContent: 'center',
           }}
         >
-          <View style={{ flex: 1, borderRadius: 12, overflow: 'hidden' }}>
+          <View style={{ flex: 1, borderRadius: 12, overflow: 'hidden', elevation: 2, }}>
             <Image style={{ width: '100%', height: '100%' }} contentFit={'cover'} source={item.image} />
           </View>
         </View>

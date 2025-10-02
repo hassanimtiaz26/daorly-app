@@ -1,21 +1,22 @@
-import { FlatList, Pressable, RefreshControl, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { Card, FAB, Text } from 'react-native-paper';
+import { Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
+import { FAB, Text } from 'react-native-paper';
 import { MD3Colors } from 'react-native-paper/lib/typescript/types';
 import { useAppTheme } from '@core/hooks/useAppTheme';
 import ThemedSearchBar from '@components/ui/inputs/ThemedSearchBar';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import HomeSlider from '@components/ui/home/HomeSlider';
-import HomeCategoryCarousel from '@components/ui/home/HomeCategoryCarousel';
+import { useCallback, useEffect, useState } from 'react';
+import HomeSlider from '@components/home/HomeSlider';
+import HomeCategoryCarousel from '@components/home/HomeCategoryCarousel';
 import { useFetch } from '@core/hooks/useFetch';
 import { useTranslation } from 'react-i18next';
-import { Link, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 import ThemedCard from '@components/ui/elements/ThemedCard';
 import ThemedHeader from '@components/ui/elements/ThemedHeader';
 import Feather from '@expo/vector-icons/Feather';
 import { useAuth } from '@core/hooks/useAuth';
-import ThemedIconButton from '@components/ui/buttons/ThemedIconButton';
 import HomeScreenShimmer from '@components/shimmers/HomeScreenShimmer';
+import { useDialog } from '@core/hooks/useDialog';
+import ThemedButton from '@components/ui/buttons/ThemedButton';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -63,6 +64,8 @@ export default function HomeScreen() {
   const [sliderData, setSliderData] = useState<any>([]);
   const [categories, setCategories] = useState<any>([]);
   const [subCategories, setSubCategories] = useState<any>([]);
+
+  const { showDialog } = useDialog();
 
   useEffect(() => {
     loadData();
@@ -149,6 +152,14 @@ export default function HomeScreen() {
               </View>
             )
           }
+
+          <ThemedButton onPress={() => {
+            showDialog({
+              variant: 'error',
+              title: t('general.welcome'),
+              message: t('dialog.welcomeMessage', { name: user.name }),
+            })
+          }}>Open Dialog</ThemedButton>
 
           {
             categories.length > 0 && (

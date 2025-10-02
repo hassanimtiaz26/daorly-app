@@ -17,6 +17,7 @@ import ThemedCloseButton from '@components/ui/buttons/ThemedCloseButton';
 import ThemedHeader from '@components/ui/elements/ThemedHeader';
 import ServicesScreenShimmer from '@components/shimmers/ServicesScreenShimmer';
 import { useBottomSheet } from '@core/hooks/useBottomSheet';
+import ServiceDetail from '@components/services/ServiceDetail';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -133,7 +134,7 @@ const ServicesScreen = () => {
     }
 
     if (type === 'services') {
-      bottomSheet.open(<Text>Hello World</Text>)
+      bottomSheet.open(<ServiceDetail service={item as TService} />)
     }
   }, [bottomSheet, type, push]);
 

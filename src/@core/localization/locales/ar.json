@@ -19,7 +19,8 @@
     "address": "Address",
     "services": "Services",
     "viewAll": "View All",
-    "save": "Save"
+    "save": "Save",
+    "dismiss": "Dismiss"
   },
   "errors": {
     "common": {

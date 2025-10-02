@@ -10,9 +10,13 @@ import {
 import { useAppTheme } from '@core/hooks/useAppTheme';
 import { BottomSheetDefaultBackdropProps } from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types';
 import { MD3Colors } from 'react-native-paper/lib/typescript/types';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const createStyles = (colors: MD3Colors) =>
   StyleSheet.create({
+    outerContainer: {
+      zIndex: 1000,
+    },
     container: {
       backgroundColor: colors.surface,
       flex: 1,
@@ -40,23 +44,24 @@ const BottomSheetBackground: React.FC<BottomSheetBackgroundProps> = ({
   return <View style={[style, styles.container]} />;
 };
 
-const BottomSheetRoot = () => {
+const GlobalBottomSheet = () => {
   const { colors } = useAppTheme();
-  const styles = createStyles(colors);
+  const insets = useSafeAreaInsets();
 
+  const styles = createStyles(colors);
   const { isOpen, content, close } = useBottomSheet();
   const bottomSheetRef = useRef<BottomSheetModal>(null);
 
-  const snapPoints = useMemo(() => ['50%', '90%'], []);
-
   useEffect(() => {
     console.log('BottomSheet isOpen:', isOpen);
-    if (isOpen) {
-      bottomSheetRef.current?.snapToIndex(0);
-    } else {
-      bottomSheetRef.current?.close();
+    if (bottomSheetRef) {
+      if (isOpen) {
+        bottomSheetRef.current?.present();
+      } else {
+        bottomSheetRef.current?.dismiss();
+      }
     }
-  }, [isOpen]);
+  }, [bottomSheetRef, isOpen]);
 
   useEffect(() => {
     const handleBackButton = () => {
@@ -98,25 +103,24 @@ const BottomSheetRoot = () => {
   );
 
   return (
-    <BottomSheetModalProvider>
-      <BottomSheetModal
-        enableDynamicSizing={true}
-        keyboardBehavior="interactive"
-        keyboardBlurBehavior="restore"
-        android_keyboardInputMode="adjustResize"
-        animateOnMount={true}
-        index={-1}
-        snapPoints={snapPoints}
-        backgroundComponent={BottomSheetBackground}
-        backdropComponent={backdropRender}
-        onChange={handleSheetChanges}
-        ref={bottomSheetRef}>
-        <BottomSheetScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-          {content}
-        </BottomSheetScrollView>
-      </BottomSheetModal>
-    </BottomSheetModalProvider>
+    <BottomSheetModal
+      enableDynamicSizing={true}
+      keyboardBehavior="interactive"
+      keyboardBlurBehavior="restore"
+      android_keyboardInputMode="adjustResize"
+      animateOnMount={true}
+      index={0}
+      backgroundComponent={BottomSheetBackground}
+      backdropComponent={backdropRender}
+      onChange={handleSheetChanges}
+      ref={bottomSheetRef}>
+      <BottomSheetScrollView
+        style={styles.container}
+        contentContainerStyle={[styles.contentContainer, { paddingBottom: insets.bottom }]}>
+        {content}
+      </BottomSheetScrollView>
+    </BottomSheetModal>
   );
 }
 
-export default BottomSheetRoot;
+export default GlobalBottomSheet;

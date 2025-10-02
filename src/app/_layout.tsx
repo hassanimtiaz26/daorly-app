@@ -19,7 +19,8 @@ import { useFirebase } from '@core/hooks/useFirebase';
 import { ShimmerProvider } from 'react-native-fast-shimmer';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import BottomSheetRoot from '@components/bottom-sheet/BottomSheetRoot';
+import GlobalBottomSheet from '@components/bottom-sheet/GlobalBottomSheet';
+import GlobalDialog from '@components/dialog/GlobalDialog';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -31,6 +32,7 @@ export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require('@/assets/fonts/SpaceMono-Regular.ttf'),
   });
+
   const { isLoading, isAuthenticated, setIsLoading, login } = useAuth();
   const segments = useSegments();
 
@@ -101,10 +103,10 @@ export default function RootLayout() {
   }
 
   return (
-    <GestureHandlerRootView style={styles.container}>
-      <BottomSheetModalProvider>
-        <SafeAreaProvider>
-          <PaperProvider theme={BaseTheme}>
+    <SafeAreaProvider>
+      <GestureHandlerRootView style={styles.container}>
+        <PaperProvider theme={BaseTheme}>
+          <BottomSheetModalProvider>
             <ShimmerProvider duration={1000}>
               <Stack screenOptions={{ headerShown: false }}>
                 <Stack.Protected guard={!isAuthenticated}>
@@ -117,12 +119,13 @@ export default function RootLayout() {
 
                 <Stack.Screen name="+not-found" />
               </Stack>
-              <BottomSheetRoot />
+              <GlobalBottomSheet />
+              <GlobalDialog />
             </ShimmerProvider>
-          </PaperProvider>
-        </SafeAreaProvider>
-      </BottomSheetModalProvider>
-    </GestureHandlerRootView>
+          </BottomSheetModalProvider>
+        </PaperProvider>
+      </GestureHandlerRootView>
+    </SafeAreaProvider>
   );
 }
 
