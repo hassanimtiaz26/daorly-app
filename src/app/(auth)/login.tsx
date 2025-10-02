@@ -24,6 +24,7 @@ import { useFirebase } from '@core/hooks/useFirebase';
 import { useAuth } from '@core/hooks/useAuth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TUser } from '@core/types/user.type';
+import { useDialog } from '@core/hooks/useDialog';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -76,6 +77,7 @@ export default function LoginScreen() {
   const { navigate } = useRouter();
 
   const { login } = useAuth();
+  const { showDialog } = useDialog();
 
   const [phoneNumber, setPhoneNumber] = useState('');
   const [showOtpScreen, setShowOtpScreen] = useState(false);
@@ -96,6 +98,12 @@ export default function LoginScreen() {
 
   useEffect(() => {
     console.log(error);
+    if (error) {
+      showDialog({
+        variant: 'error',
+        message: error,
+      })
+    }
   }, [error]);
 
   useEffect(() => {
@@ -203,6 +211,7 @@ export default function LoginScreen() {
             }) => (
               <View>
                 <ThemedTextInput
+                  keyboardType={'numeric'}
                   onBlur={onBlur}
                   onChangeText={(e) => {
                     onChange(e);

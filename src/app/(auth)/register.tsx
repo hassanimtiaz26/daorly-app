@@ -165,7 +165,6 @@ export default function RegisterScreen() {
   }
 
   return (
-    // <SafeAreaView style={styles.container}>
       <ScrollView style={styles.container} contentContainerStyle={styles.scrollViewContentContainer}>
         <View style={styles.contentContainer}>
           <Image
@@ -185,6 +184,7 @@ export default function RegisterScreen() {
                        }) => (
                 <View>
                   <ThemedTextInput
+                    keyboardType={'numeric'}
                     disabled={loading}
                     onBlur={onBlur}
                     onChangeText={(e) => {
@@ -273,6 +273,5 @@ export default function RegisterScreen() {
           </Link>
         </View>
       </ScrollView>
-    // </SafeAreaView>
   )
 }

@@ -19,6 +19,7 @@ const GlobalDialog = () => {
     isOpen,
     title,
     message,
+    messageBackground,
     variant,
     confirmText,
     cancelText,
@@ -41,10 +42,30 @@ const GlobalDialog = () => {
 
   // Determine icon and color based on variant
   const dialogDetails: any = {
-    error: { icon: 'error-outline', color: theme.colors.error },
-    success: { icon: 'check-circle-outline', color: theme.colors.primary },
-    info: { icon: 'info-outline', color: theme.colors.tertiary },
-    confirmation: { icon: 'help-outline', color: theme.colors.tertiary },
+    error: {
+      icon: 'error-outline',
+      color: theme.colors.error,
+      surface: theme.colors.errorContainer,
+      onSurface: theme.colors.onErrorContainer,
+    },
+    success: {
+      icon: 'check-circle-outline',
+      color: theme.colors.primary,
+      surface: theme.colors.primaryContainer,
+      onSurface: theme.colors.onPrimaryContainer,
+    },
+    info: {
+      icon: 'info-outline',
+      color: theme.colors.secondary,
+      surface: theme.colors.secondaryContainer,
+      onSurface: theme.colors.onSecondaryContainer,
+    },
+    confirmation: {
+      icon: 'help-outline',
+      color: theme.colors.tertiary,
+      surface: theme.colors.tertiaryContainer,
+      onSurface: theme.colors.onTertiaryContainer,
+    },
   };
 
   return (

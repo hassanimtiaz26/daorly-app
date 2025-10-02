@@ -7,6 +7,7 @@ type DialogVariant = 'info' | 'success' | 'error' | 'confirmation';
 interface DialogOptions {
   title?: string;
   message: string | ReactNode;
+  messageBackground?: boolean;
   variant?: DialogVariant;
   confirmText?: string;
   cancelText?: string;
@@ -25,6 +26,7 @@ const initialState = {
   isOpen: false,
   title: '',
   message: '',
+  messageBackground: false,
   variant: 'info' as DialogVariant,
   confirmText: 'Confirm',
   cancelText: 'Cancel',
