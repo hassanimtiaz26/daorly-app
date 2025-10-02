@@ -6,7 +6,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { BaseTheme } from '@core/config/theme.config';
 import { StyleSheet, View } from 'react-native';
 import { SplashScreen, Stack, useSegments } from 'expo-router';
-import { useAuthStore } from '@shared/store/useAuthStore';
+import { useAuth } from '@core/hooks/useAuth';
 import { useCallback, useEffect } from 'react';
 import '@core/localization/i18n';
 import { MD3Colors } from 'react-native-paper/lib/typescript/types';
@@ -16,11 +16,14 @@ import { useFetch } from '@core/hooks/useFetch';
 import { switchMap } from 'rxjs';
 import ThemedSplashScreen from '@components/ui/screens/Splash';
 import { useFirebase } from '@core/hooks/useFirebase';
+import { ShimmerProvider } from 'react-native-fast-shimmer';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import BottomSheetRoot from '@components/bottom-sheet/BottomSheetRoot';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
   }
 });
 
@@ -28,7 +31,7 @@ export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require('@/assets/fonts/SpaceMono-Regular.ttf'),
   });
-  const { isLoading, isAuthenticated, setIsLoading, login } = useAuthStore();
+  const { isLoading, isAuthenticated, setIsLoading, login } = useAuth();
   const segments = useSegments();
 
   const { colors } = useAppTheme();
@@ -98,21 +101,28 @@ export default function RootLayout() {
   }
 
   return (
-    <SafeAreaProvider>
-      <PaperProvider theme={BaseTheme}>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Protected guard={!isAuthenticated}>
-            <Stack.Screen name="(auth)" />
-          </Stack.Protected>
+    <GestureHandlerRootView style={styles.container}>
+      <BottomSheetModalProvider>
+        <SafeAreaProvider>
+          <PaperProvider theme={BaseTheme}>
+            <ShimmerProvider duration={1000}>
+              <Stack screenOptions={{ headerShown: false }}>
+                <Stack.Protected guard={!isAuthenticated}>
+                  <Stack.Screen name="(auth)" />
+                </Stack.Protected>
 
-          <Stack.Protected guard={isAuthenticated}>
-            <Stack.Screen name="(app)" />
-          </Stack.Protected>
+                <Stack.Protected guard={isAuthenticated}>
+                  <Stack.Screen name="(app)" />
+                </Stack.Protected>
 
-          <Stack.Screen name="+not-found" />
-        </Stack>
-      </PaperProvider>
-    </SafeAreaProvider>
+                <Stack.Screen name="+not-found" />
+              </Stack>
+              <BottomSheetRoot />
+            </ShimmerProvider>
+          </PaperProvider>
+        </SafeAreaProvider>
+      </BottomSheetModalProvider>
+    </GestureHandlerRootView>
   );
 }
 

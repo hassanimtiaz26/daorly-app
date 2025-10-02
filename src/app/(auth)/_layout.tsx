@@ -9,8 +9,6 @@ export default function AuthLayout() {
         screenOptions={{ headerShown: false }}>
         <Stack.Screen name="login" />
         <Stack.Screen name="register" />
-        <Stack.Screen name="profile" />
-        <Stack.Screen name="business" />
       </Stack>
     </SafeAreaView>
   );

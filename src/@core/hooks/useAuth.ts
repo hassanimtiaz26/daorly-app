@@ -15,7 +15,7 @@ type AuthState = {
   setUser: (user: any) => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const useAuth = create<AuthState>((set) => ({
   isLoading: true,
   isAuthenticated: false,
   user: null,

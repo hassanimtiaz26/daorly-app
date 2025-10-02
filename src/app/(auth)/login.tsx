@@ -21,8 +21,9 @@ import { Config } from '@core/constants/Config';
 import OtpVerifyScreen from '@components/ui/screens/OtpVerify';
 import { syrianPhoneNumberRegex } from '@core/utils/helpers.util';
 import { useFirebase } from '@core/hooks/useFirebase';
-import { useAuthStore } from '@shared/store/useAuthStore';
+import { useAuth } from '@core/hooks/useAuth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { TUser } from '@core/types/user.type';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -74,7 +75,7 @@ export default function LoginScreen() {
   const { firebaseToken } = useFirebase();
   const { navigate } = useRouter();
 
-  const { login } = useAuthStore();
+  const { login } = useAuth();
 
   const [phoneNumber, setPhoneNumber] = useState('');
   const [showOtpScreen, setShowOtpScreen] = useState(false);
@@ -109,9 +110,16 @@ export default function LoginScreen() {
   }, [trigger]);
 
   const handleLogin = useCallback(async (data: any) => {
+    const user: TUser = data.user;
     await AsyncStorage.setItem(Config.tokenStoreKey, data.token);
     login(data.user);
-    navigate('/(app)/(tabs)/home');
+    if (!user.is_personal_profile_completed) {
+      navigate('/(app)/(complete)/profile');
+    } else if (user.role === 'provider' && !user.is_business_account_exist) {
+      navigate('/(app)/(complete)/business');
+    } else {
+      navigate('/(app)/(tabs)/home');
+    }
   }, [navigate, login]);
 
   const onSubmit = useCallback((data: LoginFormType) => {

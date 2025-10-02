@@ -7,11 +7,11 @@ import OrderIcon from '@/assets/icons/orders.svg';
 import OrderFocusedIcon from '@/assets/icons/orders-focused.svg';
 import HomeIcon from '@/assets/icons/home.svg';
 import HomeFocusedIcon from '@/assets/icons/home-focused.svg';
-import { useAuthStore } from '@shared/store/useAuthStore';
+import { useAuth } from '@core/hooks/useAuth';
 
 export default function TabLayout() {
   const { colors } = useAppTheme();
-  const { user } = useAuthStore();
+  const { user } = useAuth();
 
   return (
     <Tabs

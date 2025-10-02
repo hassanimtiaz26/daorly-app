@@ -3,9 +3,11 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { useAppTheme } from '@core/hooks/useAppTheme';
 import { Text } from 'react-native-paper';
 import ThemedHeader from '@components/ui/elements/ThemedHeader';
-import { useAuthStore } from '@shared/store/useAuthStore';
+import { useAuth } from '@core/hooks/useAuth';
 import EditProfile from '@components/ui/screens/EditProfile';
 import ThemedButton from '@components/ui/buttons/ThemedButton';
+import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -16,16 +18,22 @@ const createStyles = (colors: MD3Colors) => StyleSheet.create({
     gap: 12,
   },
   innerContentContainer: {
+    padding: 20,
     flex: 1,
     width: '100%',
-    gap: 12,
+    gap: 36,
   },
 });
 
 export default function ProfileScreen() {
+  const { t } = useTranslation();
   const { colors } = useAppTheme();
   const styles = createStyles(colors);
-  const { user } = useAuthStore();
+  const { user } = useAuth();
+
+  const onProfileSaved = useCallback(() => {
+    console.log('Profile saved');
+  }, []);
 
   return (
     <ScrollView
@@ -39,13 +47,11 @@ export default function ProfileScreen() {
         </Text>
       </ThemedHeader>
 
-      <View style={{ flex: 1, padding: 20, gap: 36}}>
-        <EditProfile style={styles.innerContentContainer} />
-
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 36 }}>
-          <ThemedButton onPress={() => {}}>Save</ThemedButton>
-        </View>
-      </View>
+      <EditProfile
+        fetchProfile={true}
+        onSave={onProfileSaved}
+        buttonText={t('general.save')}
+        style={styles.innerContentContainer} />
     </ScrollView>
   );
 }

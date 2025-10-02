@@ -42,7 +42,9 @@ const HomeSlider: FC<Props> = ({ data }) => {
             justifyContent: 'center',
           }}
         >
-          <Image style={{ width: '100%', height: '100%' }} contentFit={'cover'} source={item.image} />
+          <View style={{ flex: 1, borderRadius: 12, overflow: 'hidden' }}>
+            <Image style={{ width: '100%', height: '100%' }} contentFit={'cover'} source={item.image} />
+          </View>
         </View>
       )}
     />

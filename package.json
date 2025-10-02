@@ -13,6 +13,7 @@
   "dependencies": {
     "@artmajeur/react-native-paper-phone-number-input": "^1.0.17",
     "@expo/vector-icons": "^14.1.0",
+    "@gorhom/bottom-sheet": "^5",
     "@hookform/resolvers": "^5.2.1",
     "@react-native-async-storage/async-storage": "2.1.2",
     "@react-native-firebase/app": "^23.4.0",
@@ -21,6 +22,7 @@
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/elements": "^2.3.8",
     "@react-navigation/native": "^7.1.6",
+    "@shopify/flash-list": "^2.1.0",
     "axios": "^1.11.0",
     "expo": "~53.0.20",
     "expo-blur": "~14.1.5",
@@ -47,6 +49,7 @@
     "react-hook-form": "^7.62.0",
     "react-i18next": "^15.7.3",
     "react-native": "0.79.5",
+    "react-native-fast-shimmer": "^1.3.4",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-international-phone-number": "^0.10.5",
     "react-native-paper": "^5.14.5",

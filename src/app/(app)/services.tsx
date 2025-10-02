@@ -15,6 +15,8 @@ import { Image } from 'expo-image';
 import { Href } from 'expo-router/build/types';
 import ThemedCloseButton from '@components/ui/buttons/ThemedCloseButton';
 import ThemedHeader from '@components/ui/elements/ThemedHeader';
+import ServicesScreenShimmer from '@components/shimmers/ServicesScreenShimmer';
+import { useBottomSheet } from '@core/hooks/useBottomSheet';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -56,6 +58,8 @@ const ServicesScreen = () => {
   const [autoFocus, setAutoFocus] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [items, setItems] = useState<Array<TCategory | TService>>([]);
+
+  const bottomSheet = useBottomSheet();
 
   useEffect(() => {
     console.log('subCategory', subCategory);
@@ -106,12 +110,6 @@ const ServicesScreen = () => {
     });
   }, [get, setItems, setRefreshing]);
 
-  // useEffect(() => {
-  //   if (focus && focus === 'true') {
-  //     setAutoFocus(true);
-  //   }
-  // }, [focus]);
-
   const onRefreshData = useCallback(() => {
     setRefreshing(true);
 
@@ -125,11 +123,25 @@ const ServicesScreen = () => {
     }
   }, [setRefreshing, type]);
 
+  const onServicePress = useCallback((item: TCategory | TService) => {
+    if (type === 'categories') {
+      push({
+        pathname: '/(app)/services',
+        params: { type: 'services', subCategory: item.id }
+      });
+      return;
+    }
+
+    if (type === 'services') {
+      bottomSheet.open(<Text>Hello World</Text>)
+    }
+  }, [bottomSheet, type, push]);
+
   const renderItems = useCallback(() => {
     if (loading) {
       return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
-          <ActivityIndicator />
+        <View style={styles.innerContentContainer}>
+          <ServicesScreenShimmer />
         </View>
       );
     }
@@ -149,19 +161,11 @@ const ServicesScreen = () => {
               sourceImage = require('@/assets/images/placeholder.png');
             }
 
-            const link: Href = type === 'categories' ? {
-              pathname: '/(app)/services',
-              params: { type: 'services', subCategory: item.id }
-            } : {
-              pathname: '/(app)/services',
-            };
-
             return (
               <ThemedCard
-                onPress={() => {
-                  push(link)
-                }}
-                key={index} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                onPress={() => onServicePress(item)}
+                key={index}
+                style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <View style={{ height: 56, width: 56, borderRadius: 8, overflow: 'hidden' }}>
                   <Image
                     style={{ height: '100%', width: '100%' }}

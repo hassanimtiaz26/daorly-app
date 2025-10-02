@@ -13,8 +13,9 @@ import { Image } from 'expo-image';
 import ThemedCard from '@components/ui/elements/ThemedCard';
 import ThemedHeader from '@components/ui/elements/ThemedHeader';
 import Feather from '@expo/vector-icons/Feather';
-import { useAuthStore } from '@shared/store/useAuthStore';
+import { useAuth } from '@core/hooks/useAuth';
 import ThemedIconButton from '@components/ui/buttons/ThemedIconButton';
+import HomeScreenShimmer from '@components/shimmers/HomeScreenShimmer';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -56,7 +57,7 @@ export default function HomeScreen() {
   const styles = createStyles(colors);
   const { get, loading } = useFetch();
   const { navigate, push } = useRouter();
-  const { user, logout } = useAuthStore();
+  const { user, logout } = useAuth();
 
   const [refreshing, setRefreshing] = useState(false);
   const [sliderData, setSliderData] = useState<any>([]);
@@ -139,67 +140,71 @@ export default function HomeScreen() {
         <ThemedSearchBar  />
       </ThemedHeader>
 
-      {
-        sliderData.length > 0 && (
-          <View style={[styles.innerContentContainer]}>
-            <HomeSlider data={sliderData} />
-          </View>
-        )
-      }
+      { loading ? <HomeScreenShimmer /> : (
+        <>
+          {
+            sliderData.length > 0 && (
+              <View style={[styles.innerContentContainer]}>
+                <HomeSlider data={sliderData} />
+              </View>
+            )
+          }
 
-      {
-        categories.length > 0 && (
-          <View style={[styles.innerContentContainer]}>
-            <HomeCategoryCarousel data={categories} />
-          </View>
-        )
-      }
+          {
+            categories.length > 0 && (
+              <View style={[styles.innerContentContainer]}>
+                <HomeCategoryCarousel data={categories} />
+              </View>
+            )
+          }
 
-      {
-        subCategories.length > 0 && (
-          <View style={[styles.innerContentContainer, { paddingHorizontal: 20, paddingBottom: 20, gap: 8 }]}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-              <Text style={{ color: colors.secondary }} variant={'titleLarge'}>{t('general.services')}</Text>
-              <Pressable onPress={() => {
-                push({
-                  pathname: '/(app)/services',
-                  params: { type: 'categories' },
-                })
-              }}>
-                <Text style={{ color: colors.outline }}>{t('general.viewAll')}</Text>
-              </Pressable>
-            </View>
-
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, }}>
-              {subCategories.map((item: any) => (
-                <ThemedCard
-                  onPress={() => {
+          {
+            subCategories.length > 0 && (
+              <View style={[styles.innerContentContainer, { paddingHorizontal: 20, paddingBottom: 20, gap: 8 }]}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Text style={{ color: colors.secondary }} variant={'titleLarge'}>{t('general.services')}</Text>
+                  <Pressable onPress={() => {
                     push({
                       pathname: '/(app)/services',
-                      params: { type: 'services', subCategory: item.id },
+                      params: { type: 'categories' },
                     })
-                  }}
-                  style={{
-                    width: '31%',
-                    aspectRatio: 1,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: 14,
-                    gap: 10,
-                  }}
-                  key={item.id}>
+                  }}>
+                    <Text style={{ color: colors.outline }}>{t('general.viewAll')}</Text>
+                  </Pressable>
+                </View>
 
-                  <View style={{ width: 60, height: 60 }}>
-                    <Image style={{ width: '100%', height: '100%' }} contentFit={'cover'} source={item.image} />
-                  </View>
-                  <Text style={{ alignItems: 'center' }} variant={'bodySmall'}>{item.name}</Text>
-                </ThemedCard>
-              ))}
-            </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, }}>
+                  {subCategories.map((item: any) => (
+                    <ThemedCard
+                      onPress={() => {
+                        push({
+                          pathname: '/(app)/services',
+                          params: { type: 'services', subCategory: item.id },
+                        })
+                      }}
+                      style={{
+                        width: '31%',
+                        aspectRatio: 1,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: 14,
+                        gap: 10,
+                      }}
+                      key={item.id}>
 
-          </View>
-        )
-      }
+                      <View style={{ width: 60, height: 60, borderRadius: 12, overflow: 'hidden' }}>
+                        <Image style={{ width: '100%', height: '100%' }} contentFit={'cover'} source={item.image} />
+                      </View>
+                      <Text style={{ alignItems: 'center' }} variant={'bodySmall'}>{item.name}</Text>
+                    </ThemedCard>
+                  ))}
+                </View>
+
+              </View>
+            )
+          }
+        </>
+      ) }
     </ScrollView>
   );
 }

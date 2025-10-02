@@ -20,7 +20,7 @@ import ThemedInputError from '@components/ui/inputs/ThemedInputError';
 import { useFetch } from '@core/hooks/useFetch';
 import * as Device from 'expo-device';
 import { Config } from '@core/constants/Config';
-import { useAuthStore } from '@shared/store/useAuthStore';
+import { useAuth } from '@core/hooks/useAuth';
 import { useFirebase } from '@core/hooks/useFirebase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -73,7 +73,7 @@ export default function RegisterScreen() {
   const [phoneNumber, setPhoneNumber] = useState('');
 
   const { post, loading } = useFetch();
-  const { setUser } = useAuthStore();
+  const { setUser } = useAuth();
   const { firebaseToken } = useFirebase();
 
   const registerSchema = z.object({
@@ -94,7 +94,7 @@ export default function RegisterScreen() {
     resolver: zodResolver(registerSchema),
   });
 
-  const { login } = useAuthStore();
+  const { login } = useAuth();
 
   const handleTextChange = useCallback((inputControl: any) => {
     trigger(inputControl).then();
@@ -148,7 +148,8 @@ export default function RegisterScreen() {
             if ('user' in data && 'token' in data) {
               await AsyncStorage.setItem(Config.tokenStoreKey, data.token);
               login(data.user);
-              navigate('/(app)/(tabs)/home');
+              // navigate('/(app)/(tabs)/home');
+              navigate('/(app)/(complete)/profile');
             }
           }
         }
@@ -184,6 +185,7 @@ export default function RegisterScreen() {
                        }) => (
                 <View>
                   <ThemedTextInput
+                    disabled={loading}
                     onBlur={onBlur}
                     onChangeText={(e) => {
                       onChange(e);
@@ -214,6 +216,7 @@ export default function RegisterScreen() {
                        }) => (
                 <View>
                   <ThemedInputPassword
+                    disabled={loading}
                     onBlur={onBlur}
                     onChangeText={(e) => {
                       onChange(e);
@@ -237,6 +240,7 @@ export default function RegisterScreen() {
                        }) => (
                 <View>
                   <ThemedInputPassword
+                    disabled={loading}
                     onBlur={onBlur}
                     onChangeText={(e) => {
                       onChange(e);

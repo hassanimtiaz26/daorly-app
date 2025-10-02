@@ -18,14 +18,16 @@
     "area": "Area",
     "address": "Address",
     "services": "Services",
-    "viewAll": "View All"
+    "viewAll": "View All",
+    "save": "Save"
   },
   "errors": {
     "common": {
       "invalidPhoneNumber": "رقم الهاتف غير صالح",
       "passwordsDoNotMatch": "Passwords do not match",
       "passwordMinLength": "Password must be at least 8 characters"
-    }
+    },
+    "minLength": "Minimum length is {{length}} characters"
   },
   "auth": {
     "login": {
