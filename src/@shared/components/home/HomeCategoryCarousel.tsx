@@ -57,7 +57,7 @@ const HomeCategoryCarousel: FC<Props> = ({ data }) => {
               justifyContent: 'center',
             }}
           >
-            <View style={{ height: 64, width: 64, borderRadius: '100%', overflow: 'hidden' }}>
+            <View style={{ height: 64, width: 64, borderRadius: '100%', overflow: 'hidden', elevation: 3 }}>
               <Image style={{ width: '100%', height: '100%' }} contentFit={'fill'} source={item.image} />
             </View>
             <Text style={{ color: colors.secondary, textAlign: 'center' }}>{item.name}</Text>

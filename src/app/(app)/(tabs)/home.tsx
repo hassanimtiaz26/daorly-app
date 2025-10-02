@@ -121,7 +121,15 @@ export default function HomeScreen() {
           </View>
 
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
-            <FAB
+            <Feather
+              onPress={() => {
+                navigate('/(app)/notifications')
+              }}
+              name={'bell'} size={24} color={colors.onPrimary} />
+            <Feather
+              onPress={() => logout()}
+              name={'log-out'} size={24} color={colors.onPrimary} />
+            {/*<FAB
               mode={'flat'}
               variant={'surface'}
               size={'small'}
@@ -135,8 +143,7 @@ export default function HomeScreen() {
               variant={'surface'}
               size={'small'}
               onPress={() => logout()}
-              icon={({ size, color }) => <Feather name={'log-out'} size={size} color={color} />} />
-
+              icon={({ size, color }) => <Feather name={'log-out'} size={size} color={color} />} />*/}
           </View>
         </View>
 
@@ -153,13 +160,13 @@ export default function HomeScreen() {
             )
           }
 
-          <ThemedButton onPress={() => {
+          {/*<ThemedButton onPress={() => {
             showDialog({
               variant: 'error',
               title: t('general.welcome'),
               message: t('dialog.welcomeMessage', { name: user.name }),
             })
-          }}>Open Dialog</ThemedButton>
+          }}>Open Dialog</ThemedButton>*/}
 
           {
             categories.length > 0 && (

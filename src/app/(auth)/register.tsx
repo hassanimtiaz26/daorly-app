@@ -23,6 +23,7 @@ import { Config } from '@core/constants/Config';
 import { useAuth } from '@core/hooks/useAuth';
 import { useFirebase } from '@core/hooks/useFirebase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useDialog } from '@core/hooks/useDialog';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -72,7 +73,7 @@ export default function RegisterScreen() {
   const [showOtpScreen, setShowOtpScreen] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
 
-  const { post, loading } = useFetch();
+  const { post, loading, error } = useFetch();
   const { setUser } = useAuth();
   const { firebaseToken } = useFirebase();
 
@@ -95,6 +96,16 @@ export default function RegisterScreen() {
   });
 
   const { login } = useAuth();
+  const { showDialog } = useDialog();
+
+  useEffect(() => {
+    if (error) {
+      showDialog({
+        variant: 'error',
+        message: error,
+      })
+    }
+  }, [error]);
 
   const handleTextChange = useCallback((inputControl: any) => {
     trigger(inputControl).then();
