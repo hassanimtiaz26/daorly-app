@@ -25,6 +25,9 @@ import { useAuth } from '@core/hooks/useAuth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TUser } from '@core/types/user.type';
 import { useDialog } from '@core/hooks/useDialog';
+import { ApiRoutes } from '@core/constants/ApiRoutes';
+import { TLoginParams } from '@core/types/auth.type';
+import { TResponse } from '@core/types/response.types';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -83,7 +86,7 @@ export default function LoginScreen() {
   const [showOtpScreen, setShowOtpScreen] = useState(false);
 
   const loginSchema = z.object({
-    phoneNumber: z.string().trim().regex(syrianPhoneNumberRegex, t('errors.auth.invalidPhoneNumber')),
+    phoneNumber: z.string().trim().regex(syrianPhoneNumberRegex, t('errors.phone.invalid')),
     password: z.string().trim(),
   });
   type LoginFormType = z.infer<typeof loginSchema>;
@@ -106,29 +109,37 @@ export default function LoginScreen() {
     }
   }, [error]);
 
-  useEffect(() => {
-    console.log('useEffect:statusCode', statusCode);
-    if (statusCode === 400) {
-      setShowOtpScreen(true);
-    }
-  }, [statusCode]);
+  // useEffect(() => {
+  //   console.log('useEffect:statusCode', statusCode);
+  //   if (statusCode === 400) {
+  //     setShowOtpScreen(true);
+  //   }
+  // }, [statusCode]);
 
   const handleTextChange = useCallback((inputControl: any) => {
     trigger(inputControl).then();
   }, [trigger]);
 
   const handleLogin = useCallback(async (data: any) => {
+    console.log('data', JSON.stringify(data, null, 2));
     const user: TUser = data.user;
+
+    if ('action' in data && data.action === 'CONFIRMATION_REQUIRED') {
+      console.log('Confirmation required, showing OTP screen');
+      setShowOtpScreen(true);
+      return;
+    }
+
     await AsyncStorage.setItem(Config.tokenStoreKey, data.token);
     login(data.user);
-    if (!user.is_personal_profile_completed) {
+    if (!user.profileCompletedAt) {
       navigate('/(app)/(complete)/profile');
-    } else if (user.role === 'provider' && !user.is_business_account_exist) {
+    } else if (user.role === 'provider' && !user.businessAccountCompletedAt) {
       navigate('/(app)/(complete)/business');
     } else {
       navigate('/(app)/(tabs)/home');
     }
-  }, [navigate, login]);
+  }, [navigate, login, setShowOtpScreen]);
 
   const onSubmit = useCallback((data: LoginFormType) => {
     if (!isValid) return;
@@ -136,21 +147,15 @@ export default function LoginScreen() {
     const number = '+963' + data.phoneNumber.replace(/^0/, '');
     setPhoneNumber(number);
 
-    const formData = {
-      mobile: number,
+    const formData: TLoginParams = {
+      phoneNumber: number,
       password: data.password,
-      device_token: firebaseToken,
-      operating_system: Device.osName,
-      version: Device.osVersion,
-      brand: Device.brand,
-      type: Device.deviceType?.toString(),
-      model: Device.modelName,
-      app_version: Config.appVersion,
+      firebaseToken,
     }
 
     console.log(JSON.stringify(formData, null, 2));
 
-    post('auth/login', formData)
+    post(ApiRoutes.auth.login, formData)
       .subscribe({
         next: async (response) => {
           console.log('Login Response', response);
@@ -168,12 +173,12 @@ export default function LoginScreen() {
 
   const onOtpSubmit = useCallback((otp: string) => {
     const formData = {
-      mobile: phoneNumber,
+      phoneNumber: phoneNumber,
       code: otp,
-      device_token: firebaseToken,
-      type: 'account_confirmation'
+      // firebaseToken,
+      type: 'confirmation'
     }
-    post('auth/confirm-code', formData)
+    post(ApiRoutes.auth.confirmCode, formData)
       .subscribe({
         next: async (response) => {
           if (response && 'data' in response) {

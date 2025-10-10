@@ -14,6 +14,7 @@ import { TCity } from '@core/types/general.type';
 import { useFetch } from '@core/hooks/useFetch';
 import EditProfile from '@components/ui/screens/EditProfile';
 import { useAuth } from '@core/hooks/useAuth';
+import { ApiRoutes } from '@core/constants/ApiRoutes';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -71,7 +72,7 @@ const CompleteProfile = () => {
 
 
   const onSubmit = useCallback(() => {
-    get('auth/get-profile').subscribe({
+    get(ApiRoutes.user.index).subscribe({
       next: (response) => {
         if (response && 'data' in response) {
           if ('user' in response.data) {

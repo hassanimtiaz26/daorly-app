@@ -18,12 +18,13 @@ import OtpVerifyScreen from '@components/ui/screens/OtpVerify';
 import { useCallback, useEffect, useState } from 'react';
 import ThemedInputError from '@components/ui/inputs/ThemedInputError';
 import { useFetch } from '@core/hooks/useFetch';
-import * as Device from 'expo-device';
 import { Config } from '@core/constants/Config';
 import { useAuth } from '@core/hooks/useAuth';
 import { useFirebase } from '@core/hooks/useFirebase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDialog } from '@core/hooks/useDialog';
+import { ApiRoutes } from '@core/constants/ApiRoutes';
+import { TRegisterParams } from '@core/types/auth.type';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -78,11 +79,11 @@ export default function RegisterScreen() {
   const { firebaseToken } = useFirebase();
 
   const registerSchema = z.object({
-    phoneNumber: z.string().trim().regex(syrianPhoneNumberRegex, t('errors.auth.invalidPhoneNumber')),
-    password: z.string().trim().min(8, t('errors.auth.passwordMinLength')),
+    phoneNumber: z.string().trim().regex(syrianPhoneNumberRegex, t('errors.phone.invalid')),
+    password: z.string().trim().min(8, t('errors.password.minLength')),
     confirmPassword: z.string().trim(),
   }).refine((data) => data.password === data.confirmPassword, {
-    message: t('errors.auth.passwordsDoNotMatch'),
+    message: t('errors.password.notMatch'),
     path: ['confirmPassword'],
   })
   type RegisterFormType = z.infer<typeof registerSchema>;
@@ -117,41 +118,39 @@ export default function RegisterScreen() {
     const number = '+963' + data.phoneNumber.replace(/^0/, '');
     setPhoneNumber(number);
 
-    const formData = {
-      mobile: number,
+    const formData: TRegisterParams = {
+      phoneNumber: number,
       password: data.password,
-      as_provider: false,
-      device_token: firebaseToken, // Firebase token
-      operating_system: Device.osName,
-      version: Device.osVersion,
-      brand: Device.brand,
-      type: Device.deviceType?.toString(),
-      model: Device.modelName,
-      app_version: Config.appVersion,
-    }
+      isProvider: false,
+      firebaseToken: firebaseToken, // Firebase token
+    };
 
     console.log(JSON.stringify(formData, null, 2));
 
-    post('auth/register', formData)
+    post(ApiRoutes.auth.register, formData)
       .subscribe({
         next: (response) => {
           console.log('Register Response', response);
-          if (response && 'data' in response) {
+          if (response.success) {
             setShowOtpScreen(true);
-            setUser(response.data.user);
           }
+          // if (response && 'data' in response) {
+          //   setShowOtpScreen(true);
+          //   setUser(response.data.user);
+          // }
         }
       });
   }, [isValid, post, firebaseToken]);
 
   const onOtpSubmit = useCallback((otp: string) => {
     const formData = {
-      mobile: phoneNumber,
+      phoneNumber: phoneNumber,
       code: otp,
-      device_token: firebaseToken,
-      type: 'account_confirmation'
-    }
-    post('auth/confirm-code', formData)
+      // firebaseToken,
+      type: 'confirmation'
+    };
+
+    post(ApiRoutes.auth.confirmCode, formData)
       .subscribe({
         next: async (response) => {
           if (response && 'data' in response) {

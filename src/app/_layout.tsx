@@ -21,6 +21,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import GlobalBottomSheet from '@components/bottom-sheet/GlobalBottomSheet';
 import GlobalDialog from '@components/dialog/GlobalDialog';
+import { ApiRoutes } from '@core/constants/ApiRoutes';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -52,7 +53,7 @@ export default function RootLayout() {
     //   setIsLoading(false);
     // }, 3000)
     // console.log('isLoading', isLoading);
-    get('auth/get-profile').subscribe({
+    get(ApiRoutes.auth.user).subscribe({
       next: (response) => {
         console.log('getProfile', response);
         if (response && 'data' in response) {

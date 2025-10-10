@@ -1,19 +1,20 @@
 import { FC, useRef } from 'react';
 import { ICarouselInstance } from 'react-native-reanimated-carousel';
-import { Dimensions, ScrollView, View } from 'react-native';
+import { Dimensions, Pressable, ScrollView, View } from 'react-native';
 import { Image } from 'expo-image';
 import Carousel from 'react-native-reanimated-carousel/src/components/Carousel';
 import { Text } from 'react-native-paper';
 import { useAppTheme } from '@core/hooks/useAppTheme';
-
-const width = Dimensions.get('window').width;
+import { TCategory } from '@core/types/category.type';
+import { useRouter } from 'expo-router';
 
 type Props = {
-  data: any[];
+  data: TCategory[];
 };
 
 const HomeCategoryCarousel: FC<Props> = ({ data }) => {
   const { colors } = useAppTheme();
+  const { push } = useRouter();
 
   // const { advancedSettings, onAdvancedSettingsChange } = useAdvancedSettings({
   //   // These values will be passed in the Carousel Component as default props
@@ -47,7 +48,13 @@ const HomeCategoryCarousel: FC<Props> = ({ data }) => {
       }}>
 
         {data && data.map((item, index) => (
-          <View
+          <Pressable
+            onPress={() => {
+              push({
+                pathname: '/(app)/services',
+                params: { type: 'categories', parentId: item.id },
+              })
+            }}
             key={index}
             style={{
               width: 84,
@@ -57,11 +64,11 @@ const HomeCategoryCarousel: FC<Props> = ({ data }) => {
               justifyContent: 'center',
             }}
           >
-            <View style={{ height: 64, width: 64, borderRadius: '100%', overflow: 'hidden', elevation: 3 }}>
-              <Image style={{ width: '100%', height: '100%' }} contentFit={'fill'} source={item.image} />
+            <View style={{ backgroundColor: colors.surface, height: 64, width: 64, borderRadius: 32, borderWidth: 1, borderColor: 'transparent', overflow: 'hidden', elevation: 3 }}>
+              <Image style={{ width: '100%', height: '100%' }} contentFit={'cover'} source={{ uri: item.image.media.url }} />
             </View>
             <Text style={{ color: colors.secondary, textAlign: 'center' }}>{item.name}</Text>
-          </View>
+          </Pressable>
         ))}
 
     </ScrollView>

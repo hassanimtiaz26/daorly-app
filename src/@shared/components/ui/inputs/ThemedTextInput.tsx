@@ -1,18 +1,24 @@
 import { TextInput, TextInputProps } from 'react-native-paper';
 import { StyleSheet } from 'react-native';
 import { FC } from 'react';
+import { Config } from '@core/constants/Config';
 
-const ThemedTextInput: FC<TextInputProps> = ({ style, ...props }) => {
+type ThemedTextInputProps = TextInputProps & {
+  autoHeight?: boolean;
+}
+
+const ThemedTextInput: FC<ThemedTextInputProps> = ({ style, autoHeight, ...props }) => {
   return (
-    <TextInput mode={'outlined'} style={[styles.input, style]} {...props} />
+    <TextInput mode={'outlined'} style={[{
+      width: '100%',
+      minHeight: autoHeight ? Config.inputHeight : null,
+      height: autoHeight ? null : Config.inputHeight,
+    }, style]} {...props} />
   )
 };
 
 const styles = StyleSheet.create({
-  input: {
-    width: '100%',
-    height: 64,
-  },
+
 })
 
 export default ThemedTextInput;

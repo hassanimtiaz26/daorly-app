@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { getCountryByCode, PhoneNumberInput } from '@artmajeur/react-native-paper-phone-number-input';
 import { useAppTheme } from '@core/hooks/useAppTheme';
 import { StyleSheet } from 'react-native';
+import { Config } from '@core/constants/Config';
 
 const includeCountries = ['AZ', 'BD', 'CA', 'GB', 'IN', 'NZ', 'US', 'TR'];
 
@@ -30,6 +31,6 @@ export default function ThemedPhoneTextInput() {
 const styles = StyleSheet.create({
   input: {
     width: '100%',
-    height: 64,
+    height: Config.inputHeight,
   },
 })

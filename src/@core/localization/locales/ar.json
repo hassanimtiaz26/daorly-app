@@ -20,13 +20,28 @@
     "services": "Services",
     "viewAll": "View All",
     "save": "Save",
-    "dismiss": "Dismiss"
+    "dismiss": "Dismiss",
+    "description": "Description",
+    "confirm": "Confirm"
   },
   "errors": {
-    "common": {
-      "invalidPhoneNumber": "رقم الهاتف غير صالح",
-      "passwordsDoNotMatch": "Passwords do not match",
-      "passwordMinLength": "Password must be at least 8 characters"
+    "date": {
+      "required": "Date is required"
+    },
+    "description": {
+      "required": "Description is required"
+    },
+    "password": {
+      "required": "Password is required",
+      "minLength": "Password must be at least 8 characters",
+      "notMatch": "Passwords do not match"
+    },
+    "phone": {
+      "required": "Phone number is required",
+      "invalid": "Invalid Phone Number"
+    },
+    "photos": {
+      "required": "At least one photo is required"
     },
     "minLength": "Minimum length is {{length}} characters"
   },
@@ -42,6 +57,16 @@
     "otp": {
       "title": "Enter confirmation code",
       "message": "A 4-digit code was sent to your phone number"
+    }
+  },
+  "order": {
+    "subTitle": "Please fill the details below to complete the order..",
+    "form": {
+      "description": "Add description for the service that you need...",
+      "date": "Select the date",
+      "photos": "Add photos for your problem",
+      "discount": "Add code for discount",
+      "existingProfile": "Use same profile address and contact details"
     }
   }
 }

@@ -6,6 +6,7 @@ import ThemedButton from '@components/ui/buttons/ThemedButton';
 import { useTranslation } from 'react-i18next';
 import { useBottomSheet } from '@core/hooks/useBottomSheet';
 import { useRouter } from 'expo-router';
+import ServiceSlider from '@components/services/ServiceSlider';
 
 type Props = {
   service: TService;
@@ -26,10 +27,14 @@ const styles = StyleSheet.create({
 const ServiceDetail: FC<Props> = ({ service }) => {
   const { t } = useTranslation();
   const { close } = useBottomSheet();
-  const { navigate } = useRouter();
+  const { push } = useRouter();
 
   const onContinue = useCallback(() => {
-    
+    push({
+      pathname: '/(app)/order',
+      params: { serviceId: service.id.toString() }
+    });
+    close();
   }, [close]);
 
   return (
@@ -37,6 +42,9 @@ const ServiceDetail: FC<Props> = ({ service }) => {
       {/*{service.images.length > 0 && service.images.map((image, index) => (
 
       ))}*/}
+      {service.images.length > 0 && (
+        <ServiceSlider data={service.images} />
+      )}
 
       <Text
         style={styles.title}
@@ -46,7 +54,7 @@ const ServiceDetail: FC<Props> = ({ service }) => {
 
       <ThemedButton
         buttonStyle={'secondary'}
-        onPress={() => {}}>{t('general.continue')}</ThemedButton>
+        onPress={() => onContinue()}>{t('general.continue')}</ThemedButton>
     </View>
   );
 }

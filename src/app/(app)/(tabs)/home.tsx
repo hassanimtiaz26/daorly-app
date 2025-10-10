@@ -17,6 +17,8 @@ import { useAuth } from '@core/hooks/useAuth';
 import HomeScreenShimmer from '@components/shimmers/HomeScreenShimmer';
 import { useDialog } from '@core/hooks/useDialog';
 import ThemedButton from '@components/ui/buttons/ThemedButton';
+import { TCategory } from '@core/types/category.type';
+import { TMainSlider } from '@core/types/general.type';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -52,6 +54,13 @@ const createStyles = (colors: MD3Colors) => StyleSheet.create({
   },
 });
 
+type THomeResponse = {
+  sliders: TMainSlider[];
+  categories: TCategory[];
+  subCategories: TCategory[];
+  orders: any[];
+}
+
 export default function HomeScreen() {
   const { t } = useTranslation();
   const { colors } = useAppTheme();
@@ -61,9 +70,9 @@ export default function HomeScreen() {
   const { user, logout } = useAuth();
 
   const [refreshing, setRefreshing] = useState(false);
-  const [sliderData, setSliderData] = useState<any>([]);
-  const [categories, setCategories] = useState<any>([]);
-  const [subCategories, setSubCategories] = useState<any>([]);
+  const [sliderData, setSliderData] = useState<TMainSlider[]>([]);
+  const [categories, setCategories] = useState<TCategory[]>([]);
+  const [subCategories, setSubCategories] = useState<TCategory[]>([]);
 
   const { showDialog } = useDialog();
 
@@ -75,16 +84,10 @@ export default function HomeScreen() {
     get('client/home').subscribe({
       next: (response) => {
         if (response && 'data' in response) {
-          const data = response.data;
-          if ('sliders' in data) {
-            setSliderData(data.sliders);
-          }
-          if ('main_categories' in data) {
-            setCategories(data.main_categories);
-          }
-          if ('sub_categories' in data) {
-            setSubCategories(data.sub_categories);
-          }
+          const data: THomeResponse = response.data;
+          setSliderData(data.sliders);
+          setCategories(data.categories);
+          setSubCategories(data.subCategories);
         }
       },
       complete: () => {
@@ -117,7 +120,7 @@ export default function HomeScreen() {
         }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
             <Feather name={'map-pin'} size={24} color={colors.onPrimary} />
-            <Text style={{ color: colors.onPrimary }} variant={'bodyMedium'}>{user.address}</Text>
+            <Text style={{ color: colors.onPrimary }} variant={'bodyMedium'}>{user.profile.address}</Text>
           </View>
 
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
@@ -192,7 +195,7 @@ export default function HomeScreen() {
                 </View>
 
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, }}>
-                  {subCategories.map((item: any) => (
+                  {subCategories.map((item: TCategory) => (
                     <ThemedCard
                       onPress={() => {
                         push({
@@ -211,9 +214,9 @@ export default function HomeScreen() {
                       key={item.id}>
 
                       <View style={{ width: 60, height: 60, borderRadius: 12, overflow: 'hidden' }}>
-                        <Image style={{ width: '100%', height: '100%' }} contentFit={'cover'} source={item.image} />
+                        <Image style={{ width: '100%', height: '100%' }} contentFit={'cover'} source={item.image.media.url} />
                       </View>
-                      <Text style={{ alignItems: 'center' }} variant={'bodySmall'}>{item.name}</Text>
+                      <Text style={{ alignItems: 'center', textAlign: 'center' }} variant={'bodySmall'}>{item.name}</Text>
                     </ThemedCard>
                   ))}
                 </View>

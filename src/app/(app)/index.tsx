@@ -10,7 +10,7 @@ export default function AppIndexScreen() {
     console.log('app/index rendered');
   }, []);
 
-  if (!user.is_personal_profile_completed) {
+  if (!user.profileCompletedAt) {
     return (
       <Redirect href={'/(app)/(complete)/profile'} />
     )

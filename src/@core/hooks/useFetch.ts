@@ -4,6 +4,7 @@ import axios, { AxiosError, AxiosInstance } from 'axios';
 import { Config } from '@core/constants/Config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getResponseError } from '@core/utils/helpers.util';
+import * as Device from 'expo-device';
 
 export const useFetch = () => {
   const [data, setData] = useState(null);
@@ -32,12 +33,22 @@ export const useFetch = () => {
     const requestInterceptor = axiosInstance.interceptors.request.use(
       async (config) => {
         const token = await AsyncStorage.getItem(Config.tokenStoreKey);
+        const device = {
+          operatingSystem: Device.osName,
+          version: Device.osVersion,
+          brand: Device.brand,
+          type: Device.deviceType?.toString(),
+          model: Device.modelName,
+          appVersion: Config.appVersion,
+        };
+
+        config.headers['x-device'] = JSON.stringify(device);
 
         if (token) {
           console.log('AuthorizationToken', token);
           config.headers.Authorization = `Bearer ${token}`;
         }
-        // console.log('Request Config', JSON.stringify(config, null, 2));
+
         return config;
       },
       (error) => {
@@ -51,13 +62,15 @@ export const useFetch = () => {
     }
   }, [axiosInstance]);
 
-  const request = useCallback((method: string, url: string, payload?: any) => {
+  const request = (method: string, url: string, payload?: any, headers?: any, options?: any) => {
     setLoading(true);
     setError(null);
     setData(null);
     setStatusCode(null);
 
-    return from(axiosInstance.request({ method, url, data: payload }))
+    console.log(JSON.stringify({ method, url, data: payload, headers, ...options }, null, 2))
+
+    return from(axiosInstance.request({ method, url, data: payload, headers, ...options }))
       .pipe(
         takeUntil(unmount$),
         map((response) => {
@@ -66,7 +79,7 @@ export const useFetch = () => {
           return response.data;
         }),
         catchError((err: AxiosError) => {
-          console.log('Request Error', err);
+          console.log('Request Error', JSON.stringify(err, null, 2));
           console.log('Code', err.code);
           console.log('Status', err.status);
           setStatusCode(err.status || null);
@@ -76,24 +89,14 @@ export const useFetch = () => {
         finalize(() => {
           setLoading(false);
         }),
-      )
-      // .subscribe({
-      //   next: (response) => {
-      //     setData(response.data);
-      //   },
-      //   error: (error) => {
-      //     setError(error);
-      //   },
-      //   complete: () => {
-      //     setLoading(false);
-      //   },
-      // });
-  }, [axiosInstance, setLoading, setError, setData]);
+      );
+  };
 
-  const get = useCallback((url: string) => request('GET', url), [request]);
-  const post = useCallback((url: string, payload: any) => request('POST', url, payload), [request]);
-  const put = useCallback((url: string, payload: any) => request('PUT', url, payload), [request]);
-  const del = useCallback((url: string) => request('DELETE', url), [request]);
+  const get = (url: string) => request('GET', url);
+  const post = (url: string, payload: any, headers?: any, options?: any) => request('POST', url, payload, headers, options);
+  const patch = (url: string, payload: any) => request('PATCH', url, payload);
+  const put = (url: string, payload: any) => request('PUT', url, payload);
+  const del = (url: string) => request('DELETE', url);
 
-  return { data, loading, error, get, post, put, delete: del, statusCode };
+  return { data, loading, error, get, post, patch, put, delete: del, statusCode };
 }

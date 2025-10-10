@@ -43,7 +43,7 @@ export default function ProfileScreen() {
         <Text
           style={{ color: colors.onPrimary }}
           variant={'titleLarge'}>Hello{' '}
-          <Text style={{ color: colors.onPrimary, fontWeight: 'bold' }}>{user.f_name}!</Text>
+          <Text style={{ color: colors.onPrimary, fontWeight: 'bold' }}>{user.profile.firstName}!</Text>
         </Text>
       </ThemedHeader>
 
