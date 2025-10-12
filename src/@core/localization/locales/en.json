@@ -67,6 +67,10 @@
       "photos": "Add photos for your problem",
       "discount": "Add code for discount",
       "existingProfile": "Use same profile address and contact details"
-    }
+    },
+    "offer": {
+      "accept": "Accept Offer"
+    },
+    "cancel": "Cancel Order"
   }
 }

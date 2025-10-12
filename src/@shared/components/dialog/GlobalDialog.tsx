@@ -1,6 +1,6 @@
 // src/components/GlobalDialog.tsx
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import {
   Button,
   Dialog,
@@ -21,6 +21,7 @@ const GlobalDialog = () => {
     message,
     messageBackground,
     variant,
+    type,
     confirmText,
     cancelText,
     onConfirm,
@@ -60,12 +61,6 @@ const GlobalDialog = () => {
       surface: theme.colors.secondaryContainer,
       onSurface: theme.colors.onSecondaryContainer,
     },
-    confirmation: {
-      icon: 'help-outline',
-      color: theme.colors.tertiary,
-      surface: theme.colors.tertiaryContainer,
-      onSurface: theme.colors.onTertiaryContainer,
-    },
   };
 
   return (
@@ -85,15 +80,35 @@ const GlobalDialog = () => {
           color={dialogDetails[variant].color} />
         {title && <Dialog.Title style={styles.title}>{title}</Dialog.Title>}
         <Dialog.Content>
-          <Text variant="bodyMedium">{message}</Text>
+          <View style={{
+            backgroundColor: dialogDetails[variant].surface,
+            padding: 12,
+            borderLeftColor: dialogDetails[variant].color,
+            borderLeftWidth: 4,
+          }}>
+            <Text style={{ color: dialogDetails[variant].onSurface, textAlign: 'center' }} variant="bodyMedium">{message}</Text>
+          </View>
         </Dialog.Content>
-        <Dialog.Actions style={{ justifyContent: 'center'}}>
-          {variant === 'confirmation' && (
-            <Button mode={'outlined'} onPress={handleCancel}>{cancelText}</Button>
-          )}
-          <Button mode={'contained-tonal'} onPress={handleConfirm}>
-            {variant === 'confirmation' ? confirmText : t('general.dismiss')}
+        <Dialog.Actions style={{ justifyContent: 'center', gap: 24 }}>
+          <Button
+            theme={{ roundness: 2 }}
+            mode={'elevated'}
+            rippleColor={theme.colors.surfaceDisabled}
+            buttonColor={dialogDetails[variant].surface}
+            labelStyle={{ color: dialogDetails[variant].onSurface }}
+            onPress={handleConfirm}>
+            {type === 'confirmation' ? confirmText : t('general.dismiss')}
           </Button>
+          {type === 'confirmation' && (
+            <Button
+              theme={{ roundness: 2 }}
+              mode={'elevated'}
+              rippleColor={theme.colors.surfaceDisabled}
+              labelStyle={{ color: dialogDetails[variant].onSurface }}
+              onPress={handleCancel}>
+              {cancelText}
+            </Button>
+          )}
         </Dialog.Actions>
       </Dialog>
     </Portal>

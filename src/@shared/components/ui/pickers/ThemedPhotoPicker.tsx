@@ -20,6 +20,13 @@ const ThemedPhotoPicker: FC<Props> = ({ loading, onChange }) => {
   const [photos, setPhotos] = useState<ImagePickerAsset[]>([]);
 
   const pickImage = async () => {
+    const permission = await ImagePicker.getMediaLibraryPermissionsAsync();
+
+    if (!permission.granted) {
+      alert('Permission to access media library is required!');
+      return;
+    }
+
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: 'images',
       // allowsEditing: true,

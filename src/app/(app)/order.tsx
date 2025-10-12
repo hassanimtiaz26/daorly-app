@@ -21,14 +21,15 @@ import { DateTime } from 'luxon';
 import { z } from 'zod';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { syrianPhoneNumberRegex } from '@core/utils/helpers.util';
+import { syrianPhoneNumberRegex, uriToBlob } from '@core/utils/helpers.util';
 import ThemedInputError from '@components/ui/inputs/ThemedInputError';
 import ThemedPhotoPicker from '@components/ui/pickers/ThemedPhotoPicker';
 import { ImagePickerAsset } from 'expo-image-picker/src/ImagePicker.types';
 import axios, { AxiosInstance } from 'axios';
 import { Config } from '@core/constants/Config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { File } from 'expo-file-system';
+import * as FileSystem from 'expo-file-system';
+import { useDialog } from '@core/hooks/useDialog';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -65,7 +66,7 @@ const OrderScreen = () => {
   const { t } = useTranslation();
   const { colors } = useAppTheme();
   const styles = createStyles(colors);
-  const { canGoBack, back } = useRouter();
+  const { canGoBack, back, replace } = useRouter();
 
   const formSchema = z.object({
     description: z.string().trim().min(1, 'Description is required'),
@@ -133,7 +134,8 @@ const OrderScreen = () => {
 
   const useProfileDetails = watch('useProfileDetails');
 
-  const { get, post, loading } = useFetch();
+  const { showDialog } = useDialog();
+  const { get, post, error, loading } = useFetch();
   const { serviceId } = useLocalSearchParams<OrderSearchParams>();
   const [service, setService] = useState<TService | null>(null);
   // const [checked, setChecked] = useState(false);
@@ -160,6 +162,15 @@ const OrderScreen = () => {
   useEffect(() => {
     getCities();
   }, []);
+
+  useEffect(() => {
+    if (error) {
+      showDialog({
+        variant: 'error',
+        message: error,
+      });
+    }
+  }, [error]);
 
   useEffect(() => {
     if (serviceId) {
@@ -274,10 +285,14 @@ const OrderScreen = () => {
   };
 
   const onDateChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
-    console.log('selectedDateEvent', event);
-    console.log('selectedDate', selectedDate);
+    const currentDate = selectedDate || date;
+    const timeZoneOffsetInMinutes = currentDate.getTimezoneOffset();
+    const localTime = currentDate.getTime() - (timeZoneOffsetInMinutes * 60000);
+    const correctedDate = new Date(localTime);
+
     if (selectedDate) {
-      setValue('date', selectedDate ? DateTime.fromJSDate(selectedDate).toLocaleString() : '', {
+      setDate(correctedDate);
+      setValue('date', DateTime.fromJSDate(correctedDate).toLocaleString(), {
         shouldDirty: true,
         shouldTouch: true,
         shouldValidate: true
@@ -301,60 +316,54 @@ const OrderScreen = () => {
     // if (!isValid) return;
 
     // console.log('data', JSON.stringify(data, null, 2));
-    const formData = new FormData();
-    formData.append('serviceId', serviceId as string);
-    formData.append('description', data.description);
-    formData.append('date', data.date);
-    formData.append('useProfileDetails', String(data.useProfileDetails));
 
-    if (!data.useProfileDetails) {
-      formData.append('phoneNumber', data.phoneNumber);
-      formData.append('area', data.area);
-      formData.append('address', data.address);
+    const images = [];
+
+    try {
+      const uploadUrl = new URL(Config.baseUrlContext, Config.baseUrl).toString() + ApiRoutes.media.upload;
+      const bearerToken = await AsyncStorage.getItem(Config.tokenStoreKey);
+      for (const photo of data.photos) {
+        const uploadedFile = await FileSystem.uploadAsync(
+          uploadUrl,
+          photo.uri,
+          {
+            httpMethod: 'POST',
+            uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+            fieldName: 'file',
+            headers: {
+              Authorization: `Bearer ${bearerToken}`,
+            },
+          }
+        );
+        if (uploadedFile.status === 200 || uploadedFile.status === 201) {
+          const response = JSON.parse(uploadedFile.body || '{}');
+          const file = response.data.file;
+          images.push(file.id);
+          console.log('response', response);
+        }
+      }
+    } catch (uploadError) {
+      console.log('Upload Error', uploadError);
     }
 
-    data.photos.forEach((photo, index) => {
-      // formData.append('photos', {
-      //   uri: photo.uri,
-      //   name: photo.fileName,
-      //   type: photo.type,
-      // } as any);
-      formData.append('photos', new File(photo.uri));
-    });
+    const formData = {
+      serviceId,
+      description: data.description,
+      date: DateTime.fromJSDate(date).toFormat('yyyy-MM-dd'),
+      images,
+      // images: [61],
+      useProfileDetails: data.useProfileDetails,
+    };
 
-    console.log('formData', formData);
+    if (!useProfileDetails) {
+      formData['profileDetails'] = {
+        phoneNumber: '+963' + data.phoneNumber.replace(/^0/, '') || null,
+        areaId: data.area || null,
+        address: data.address || null,
+      };
+    }
 
-    // try {
-    //   const token = await AsyncStorage.getItem(Config.tokenStoreKey);
-    //   // const axiosInstance: AxiosInstance = axios.create({
-    //   //   baseURL: new URL(Config.baseUrlContext, Config.baseUrl).toString(),
-    //   //   headers: {
-    //   //     'Content-Type': 'multipart/form-data',
-    //   //     'Authorization': `Bearer ${token}`,
-    //   //   },
-    //   // });
-    //   //
-    //   // const request = await axiosInstance.post(ApiRoutes.orders.create, formData, {
-    //   //   transformRequest: (data: any, headers) => {
-    //   //     return data;
-    //   //   }
-    //   // });
-    //   // console.log('Order Response', request.data);
-    //
-    //   const url = new URL(Config.baseUrlContext, Config.baseUrl).toString() + '/' + ApiRoutes.orders.create;
-    //   const response = await fetch(url, {
-    //     method: 'POST',
-    //     body: formData,
-    //     headers: {
-    //       'Authorization': `Bearer ${token}`,
-    //     },
-    //   });
-    //
-    //   const data = await response.json();
-    //   console.log('Upload success:', data);
-    // } catch (formError) {
-    //   console.error('formError', JSON.stringify(formError, null, 2));
-    // }
+    console.log('formData', JSON.stringify(formData, null, 2));
 
     post(
       ApiRoutes.orders.create,
@@ -363,6 +372,13 @@ const OrderScreen = () => {
       .subscribe({
         next: (response) => {
           console.log('Order Response', response);
+          if (response.success) {
+            showDialog({
+              variant: 'success',
+              message: response.message,
+            });
+            replace('/(app)/(tabs)/orders');
+          }
         }
       });
   };
@@ -450,7 +466,6 @@ const OrderScreen = () => {
                 testID="dateTimePicker"
                 value={date}
                 mode={'date'}
-                is24Hour={true}
                 onChange={onDateChange}
                 minimumDate={minDate}
               />

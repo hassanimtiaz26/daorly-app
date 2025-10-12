@@ -24,7 +24,7 @@
       },
       "edgeToEdgeEnabled": true,
       "package": "com.sourcecode.daorly",
-      "versionCode": 2,
+      "versionCode": 3,
       "permissions": [
         "android.permission.POST_NOTIFICATIONS",
         "android.permission.READ_MEDIA_IMAGES"

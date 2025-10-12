@@ -10,7 +10,7 @@ export type TUser = {
   profileCompletedAt: boolean;
   businessAccountCompletedAt: boolean;
   profile: TUserProfile;
-  // business_accounts?: TBusinessAccount[];
+  businessAccounts?: TBusinessAccount[];
 }
 
 export type TUserProfile = {

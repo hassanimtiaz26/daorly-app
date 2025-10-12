@@ -16,11 +16,17 @@ export const ApiRoutes: any = {
     cities: 'locations/cities',
     areas: (cityId: number) => `locations/cities/${cityId}/areas`,
   },
+  media: {
+    upload: 'media',
+  },
   orders: {
     index: 'orders',
+    withStatus: (status: string) => `orders?status=${status}`,
     create: 'orders',
-    details: (id: number) => `orders/${id}`,
-    makeOffer: (id: number) => `orders/${id}/offer`,
+    cancel: (orderId: number) => `orders/cancel/${orderId}`,
+    details: (orderId: number) => `orders/${orderId}`,
+    makeOffer: (orderId: number) => `orders/${orderId}/offers`,
+    acceptOffer: (offerId: number) => `orders/offers/${offerId}/accept`,
   },
   services: {
     index: 'services',

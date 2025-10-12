@@ -19,6 +19,7 @@ import { useDialog } from '@core/hooks/useDialog';
 import ThemedButton from '@components/ui/buttons/ThemedButton';
 import { TCategory } from '@core/types/category.type';
 import { TMainSlider } from '@core/types/general.type';
+import { useSnackbar } from '@core/hooks/useSnackbar';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -74,7 +75,7 @@ export default function HomeScreen() {
   const [categories, setCategories] = useState<TCategory[]>([]);
   const [subCategories, setSubCategories] = useState<TCategory[]>([]);
 
-  const { showDialog } = useDialog();
+  const snackbar = useSnackbar();
 
   useEffect(() => {
     loadData();
@@ -162,14 +163,6 @@ export default function HomeScreen() {
               </View>
             )
           }
-
-          {/*<ThemedButton onPress={() => {
-            showDialog({
-              variant: 'error',
-              title: t('general.welcome'),
-              message: t('dialog.welcomeMessage', { name: user.name }),
-            })
-          }}>Open Dialog</ThemedButton>*/}
 
           {
             categories.length > 0 && (
