@@ -15,7 +15,9 @@ import { DateTime } from 'luxon';
 import ThemedButton from '@components/ui/buttons/ThemedButton';
 import { useTranslation } from 'react-i18next';
 import { useDialog } from '@core/hooks/useDialog';
-import OrderItem from '@components/orders/OrderItem';
+import OrderItemClient from '@components/orders/OrderItemClient';
+import { useAuth } from '@core/hooks/useAuth';
+import OrderItemProvider from '@components/orders/OrderItemProvider';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -37,17 +39,18 @@ export default function OrderScreen() {
   const { t } = useTranslation();
   const { colors } = useAppTheme();
   const styles = createStyles(colors);
+  const { user } = useAuth();
 
   const { get, post, loading } = useFetch();
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [statuses, setStatuses] = useState<TOrderStatusItem[]>([
-    { key: 'pending', label: 'Pending', icon: 'schedule' },
+  const statuses = useMemo<TOrderStatusItem[]>(() => ([
+    { key: 'pending', label: user.role === 'provider' ? 'New' : 'Pending', icon: 'schedule' },
     { key: 'waiting_confirmation', label: 'Waiting Confirmation', icon: 'hourglass-top' },
     { key: 'confirmed', label: 'Confirmed', icon: 'check-circle-outline' },
     { key: 'canceled', label: 'Canceled', icon: 'cancel' },
     { key: 'done', label: 'Done', icon: 'check' },
-  ]);
+  ]), [user]);
   const [status, setStatus] = useState<TOrderStatus>('pending');
   const [orders, setOrders] = useState<TOrder[]>([]);
   const { showDialog } = useDialog();
@@ -76,7 +79,7 @@ export default function OrderScreen() {
   const onRefreshData = useCallback(() => {
     setRefreshing(true);
     getOrders();
-  }, [setRefreshing]);
+  }, [getOrders, setRefreshing]);
 
 
 
@@ -92,12 +95,21 @@ export default function OrderScreen() {
     if (orders && orders.length > 0) {
       return (
         <List.Section style={{ paddingHorizontal: 20, gap: 10 }}>
-          {orders.map((order) => (
-            <OrderItem
+          {orders.map((order) => {
+            if (user.role === 'provider') {
+              return (
+                <OrderItemProvider
+                  key={order.id}
+                  order={order}
+                  onRefreshOrders={() => getOrders()} />
+              );
+            }
+
+            return <OrderItemClient
               key={order.id}
               order={order}
-              onRefreshOrders={() => getOrders()} />
-          ))}
+              onRefreshOrders={() => getOrders()} />;
+          })}
         </List.Section>
       );
     }

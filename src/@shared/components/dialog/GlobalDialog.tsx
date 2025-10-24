@@ -27,6 +27,7 @@ const GlobalDialog = () => {
     onConfirm,
     onCancel,
     hideDialog,
+    content,
   } = useDialog();
 
   const theme = useAppTheme();
@@ -79,7 +80,9 @@ const GlobalDialog = () => {
           )}
           color={dialogDetails[variant].color} />
         {title && <Dialog.Title style={styles.title}>{title}</Dialog.Title>}
-        <Dialog.Content>
+        <Dialog.Content style={{
+          gap: 12,
+        }}>
           <View style={{
             backgroundColor: dialogDetails[variant].surface,
             padding: 12,
@@ -88,6 +91,7 @@ const GlobalDialog = () => {
           }}>
             <Text style={{ color: dialogDetails[variant].onSurface, textAlign: 'center' }} variant="bodyMedium">{message}</Text>
           </View>
+          {content}
         </Dialog.Content>
         <Dialog.Actions style={{ justifyContent: 'center', gap: 24 }}>
           <Button

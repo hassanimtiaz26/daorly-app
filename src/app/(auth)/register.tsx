@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Text, TextInput } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MD3Colors } from 'react-native-paper/lib/typescript/types';
@@ -25,6 +25,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDialog } from '@core/hooks/useDialog';
 import { ApiRoutes } from '@core/constants/ApiRoutes';
 import { TRegisterParams } from '@core/types/auth.type';
+import MaterialIcon from '@expo/vector-icons/MaterialIcons';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -82,22 +83,36 @@ export default function RegisterScreen() {
     phoneNumber: z.string().trim().regex(syrianPhoneNumberRegex, t('errors.phone.invalid')),
     password: z.string().trim().min(8, t('errors.password.minLength')),
     confirmPassword: z.string().trim(),
+    role: z.string().trim(),
   }).refine((data) => data.password === data.confirmPassword, {
     message: t('errors.password.notMatch'),
     path: ['confirmPassword'],
   })
   type RegisterFormType = z.infer<typeof registerSchema>;
   const {
+    register,
     control,
     handleSubmit,
     formState: { errors, isValid },
     trigger,
+    setValue,
   } = useForm<RegisterFormType>({
     resolver: zodResolver(registerSchema),
+    defaultValues: {
+      phoneNumber: '',
+      password: '',
+      confirmPassword: '',
+      role: 'client',
+    },
   });
 
   const { login } = useAuth();
   const { showDialog } = useDialog();
+  const [role, setRole] = useState<string>('client');
+
+  useEffect(() => {
+    register('role');
+  }, [register]);
 
   useEffect(() => {
     if (error) {
@@ -121,7 +136,7 @@ export default function RegisterScreen() {
     const formData: TRegisterParams = {
       phoneNumber: number,
       password: data.password,
-      isProvider: false,
+      isProvider: data.role === 'provider',
       firebaseToken: firebaseToken, // Firebase token
     };
 
@@ -131,7 +146,7 @@ export default function RegisterScreen() {
       .subscribe({
         next: (response) => {
           console.log('Register Response', response);
-          if (response.success) {
+          if (response && response.success) {
             setShowOtpScreen(true);
           }
           // if (response && 'data' in response) {
@@ -166,6 +181,18 @@ export default function RegisterScreen() {
       })
   }, [navigate, post, phoneNumber, firebaseToken]);
 
+  const onRoleChange = (data: string) => {
+    if (role === data) return;
+
+    setRole(data);
+
+    setValue('role', data, {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true,
+    });
+  }
+
   if (showOtpScreen) {
     return <OtpVerifyScreen
       type={'accountConfirmation'}
@@ -194,7 +221,7 @@ export default function RegisterScreen() {
                        }) => (
                 <View>
                   <ThemedTextInput
-                    keyboardType={'numeric'}
+                    keyboardType={'number-pad'}
                     disabled={loading}
                     onBlur={onBlur}
                     onChangeText={(e) => {
@@ -264,6 +291,51 @@ export default function RegisterScreen() {
                   )}
                 </View>
               )} />
+
+
+            <View style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 16,
+            }}>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() => onRoleChange('client')}
+                style={{
+                  padding: 12,
+                  borderRadius: 8,
+                  borderColor: colors.secondary,
+                  borderWidth: 2,
+                  backgroundColor: role === 'client' ? colors.secondary : colors.surface,
+                  flex: 1,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 10,
+                }}>
+                <MaterialIcon name={'person-outline'} size={100} color={role === 'client' ? colors.onSecondary : colors.secondary} />
+
+                <Text style={{ color: role === 'client' ? colors.onSecondary : colors.secondary }} variant={'titleMedium'}>User</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() => onRoleChange('provider')}
+                style={{
+                  padding: 12,
+                  borderRadius: 8,
+                  borderColor: colors.primary,
+                  borderWidth: 2,
+                  backgroundColor: role === 'provider' ? colors.primary : colors.surface,
+                  flex: 1,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 10,
+                }}>
+                <MaterialIcon name={'engineering'} size={100} color={role === 'provider' ? colors.onPrimary : colors.primary} />
+
+                <Text style={{ color: role === 'provider' ? colors.onPrimary : colors.primary }} variant={'titleMedium'}>Business Provider</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
 

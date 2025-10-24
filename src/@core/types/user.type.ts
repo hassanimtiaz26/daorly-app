@@ -29,4 +29,5 @@ export type TBusinessAccount = {
   name: string;
   services: TService[];
   areas: TArea[];
+  user: TUser;
 }

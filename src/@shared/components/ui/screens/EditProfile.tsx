@@ -30,8 +30,6 @@ const styles = StyleSheet.create({
   }
 });
 
-
-
 const EditProfile: FC<Props> = ({ buttonText, onSave, fetchProfile, ...props }) => {
   const { t } = useTranslation();
   const { get, post, loading } = useFetch();

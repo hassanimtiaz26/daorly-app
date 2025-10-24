@@ -1,11 +1,12 @@
 import { TMediaAttachment } from '@core/types/media.type';
-import { TUser } from '@core/types/user.type';
+import { TBusinessAccount, TUser } from '@core/types/user.type';
 import { TService } from '@core/types/service.type';
 import { TArea } from '@core/types/general.type';
 
 export type TOrder = {
   id: number;
   userId: number;
+  businessId?: number;
   serviceId: number;
   areaId: number;
   description: string;
@@ -21,8 +22,10 @@ export type TOrder = {
   updatedAt: Date;
   images: TMediaAttachment[];
   user: TUser;
+  business?: TBusinessAccount;
   service: TService;
   area: TArea;
+  businessOffer?: TOrderOffer;
   offers?: TOrderOffer[];
 }
 
@@ -38,12 +41,12 @@ export type TOrderStatusItem = {
 export type TOrderOffer = {
   id: number;
   orderId: number;
-  userId: number;
+  businessId: number;
   price: number;
   message: string;
   phoneNumber: string;
   status: TOfferStatus;
   createdAt: Date;
   updatedAt: Date;
-  user: TUser;
+  business: TBusinessAccount;
 };

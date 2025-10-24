@@ -1,5 +1,6 @@
 {
   "general": {
+    "hello": "Hello",
     "welcome": "اهلا بك في دورلي",
     "phoneNumber": "رقم الجوال",
     "password": "كلمة السر",
@@ -22,7 +23,15 @@
     "save": "Save",
     "dismiss": "Dismiss",
     "description": "Description",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "register": "Register",
+    "availableAreas": "Available Areas",
+    "businessName": "Business Name",
+    "accept": "Accept",
+    "reject": "Reject",
+    "price": "Price",
+    "back": "Back",
+    "close": "Close"
   },
   "errors": {
     "date": {
@@ -57,6 +66,12 @@
     "otp": {
       "title": "Enter confirmation code",
       "message": "A 4-digit code was sent to your phone number"
+    },
+    "profile": {
+      "title": "Personal Information"
+    },
+    "business": {
+      "title": "Business Information"
     }
   },
   "order": {
@@ -69,8 +84,18 @@
       "existingProfile": "Use same profile address and contact details"
     },
     "offer": {
-      "accept": "Accept Offer"
+      "accept": "Accept Offer",
+      "edit": "Edit your Offer",
+      "acceptPrompt": "Are you sure you want to accept the order?",
+      "fillDetails": "Please fill the details below to complete the order..",
+      "form": {
+        "message": "Add your notes to be displayed on your offer...",
+        "price": "Add your price (AVG)",
+        "phoneNumber": "Add alternative contacting number"
+      }
     },
-    "cancel": "Cancel Order"
+    "accept": "Accept Order",
+    "cancel": "Cancel Order",
+    "complete": "Complete Order"
   }
 }

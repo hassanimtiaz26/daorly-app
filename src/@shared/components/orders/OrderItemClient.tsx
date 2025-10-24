@@ -19,7 +19,7 @@ type Props = {
   onRefreshOrders: () => void;
 }
 
-const OrderItem: FC<Props> = ({ order, onRefreshOrders }) => {
+const OrderItemClient: FC<Props> = ({ order, onRefreshOrders }) => {
   const { colors } = useAppTheme();
   const cancelableStatuses: TOrderStatus[] = useMemo(() => ['pending', 'waiting_confirmation'], []);
   const { showDialog } = useDialog();
@@ -61,7 +61,7 @@ const OrderItem: FC<Props> = ({ order, onRefreshOrders }) => {
       title: 'Accept Offer',
       message: 'Are you sure you want to confirm this order?',
       onConfirm: () => {
-        post(ApiRoutes.orders.acceptOffer(offerId), { offerId })
+        post(ApiRoutes.orders.acceptOffer(order.id, offerId), { offerId })
           .subscribe({
             next: (response) => {
               if (response.success) {
@@ -73,6 +73,8 @@ const OrderItem: FC<Props> = ({ order, onRefreshOrders }) => {
       },
     })
   }
+
+  const address = useMemo(() => `${order.address}, ${order.area.name}, ${order.area.city.name}`, [order]);
 
   return (
     <List.Accordion
@@ -107,12 +109,12 @@ const OrderItem: FC<Props> = ({ order, onRefreshOrders }) => {
         <Divider style={{ marginVertical: 8 }} />
         <OrderListItem text={DateTime.fromJSDate(new Date(order.scheduleAt)).toLocaleString()} icon={'calendar-month'} />
         <Divider style={{ marginVertical: 8 }} />
-        <OrderListItem text={order.address} icon={'location-pin'} />
+        <OrderListItem text={address} icon={'location-pin'} />
 
         {acceptedOffer && (
           <>
             <Divider style={{ marginVertical: 8 }} />
-            <OrderListItem text={acceptedOffer.user.businessAccounts[0]?.name} icon={'person'} />
+            <OrderListItem text={acceptedOffer.business.name} icon={'person'} />
             <Divider style={{ marginVertical: 8 }} />
             <OrderListItem text={acceptedOffer.message} icon={'description'} />
             <Divider style={{ marginVertical: 8 }} />
@@ -160,7 +162,7 @@ const OrderItem: FC<Props> = ({ order, onRefreshOrders }) => {
             paddingLeft: 12,
             paddingRight: 12,
           }}>
-          <OrderListItem text={offer.user.profile.firstName} icon={'person'} />
+          <OrderListItem text={offer.business.name} icon={'person'} />
           <Divider style={{ marginVertical: 8 }} />
           <OrderListItem text={offer.message} icon={'description'} />
           <Divider style={{ marginVertical: 8 }} />
@@ -196,4 +198,4 @@ const OrderItem: FC<Props> = ({ order, onRefreshOrders }) => {
   );
 }
 
-export default OrderItem;
+export default OrderItemClient;

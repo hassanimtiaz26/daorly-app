@@ -23,6 +23,7 @@ import GlobalBottomSheet from '@components/bottom-sheet/GlobalBottomSheet';
 import GlobalDialog from '@components/dialog/GlobalDialog';
 import { ApiRoutes } from '@core/constants/ApiRoutes';
 import GlobalSnackbar from '@components/snackbar/GlobalSnackbar';
+import ThemedDrawer from '@components/drawer/Drawer';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -124,6 +125,7 @@ export default function RootLayout() {
               <GlobalBottomSheet />
               <GlobalSnackbar />
               <GlobalDialog />
+              <ThemedDrawer />
             </ShimmerProvider>
           </BottomSheetModalProvider>
         </PaperProvider>

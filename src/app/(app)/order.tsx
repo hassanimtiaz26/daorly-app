@@ -503,7 +503,7 @@ const OrderScreen = () => {
                   render={({ field: { onChange, onBlur, value }, fieldState: { error }}) => (
                     <View>
                       <ThemedTextInput
-                        keyboardType={'numeric'}
+                        keyboardType={'number-pad'}
                         onBlur={onBlur}
                         onChangeText={(e) => {
                           onChange(e);

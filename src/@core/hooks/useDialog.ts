@@ -8,6 +8,7 @@ interface DialogOptions {
   title?: string;
   message: string | ReactNode;
   messageBackground?: boolean;
+  content?: ReactNode;
   variant?: DialogVariant;
   type?: DialogType;
   confirmText?: string;
@@ -27,6 +28,7 @@ const initialState = {
   title: '',
   message: '',
   messageBackground: false,
+  content: null,
   variant: 'info' as DialogVariant,
   type: 'alert' as DialogType,
   confirmText: 'Confirm',
@@ -42,6 +44,8 @@ export const useDialog = create<DialogState>((set) => ({
       isOpen: true,
       title: options.title,
       message: options.message,
+      messageBackground: options.messageBackground,
+      content: options.content,
       variant: options.variant || 'info',
       type: options.type || 'alert',
       confirmText: options.confirmText || 'Confirm',

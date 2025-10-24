@@ -33,7 +33,7 @@ const createStyles = (colors: MD3Colors) => StyleSheet.create({
     paddingTop: 32,
   },
   title: {
-    marginBottom: 8,
+    marginTop: 8,
   },
   logo: {
     width: 200,
@@ -76,8 +76,15 @@ const CompleteProfile = () => {
       next: (response) => {
         if (response && 'data' in response) {
           if ('user' in response.data) {
-            setUser(response.data.user);
-            replace('/(app)/(tabs)/home');
+            const user = response.data.user;
+            setUser(user);
+
+            if (user.role === 'provider') {
+              replace('/(app)/(complete)/business');
+            } else {
+              replace('/(app)/(tabs)/home');
+            }
+
           }
         }
       },
@@ -91,8 +98,8 @@ const CompleteProfile = () => {
           style={styles.logo}
           contentFit={'contain'}
           source={require('@/assets/images/daorly-logo.png')} />
-        <Text style={styles.title} variant={'titleMedium'}>{t('general.welcome')}</Text>
         <Text variant={'titleLarge'}>{t('auth.register.title')}</Text>
+        <Text style={styles.title} variant={'titleMedium'}>{t('auth.profile.title')}</Text>
       </View>
 
       <EditProfile

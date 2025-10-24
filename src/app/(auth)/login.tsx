@@ -216,7 +216,7 @@ export default function LoginScreen() {
             }) => (
               <View>
                 <ThemedTextInput
-                  keyboardType={'numeric'}
+                  keyboardType={'number-pad'}
                   onBlur={onBlur}
                   onChangeText={(e) => {
                     onChange(e);
