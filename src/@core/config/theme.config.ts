@@ -42,9 +42,9 @@ export const BaseTheme: ThemeConfig = {
 
     // Background and surface colors
     background: 'rgb(245, 247, 249)',
-    onBackground: 'rgb(27, 27, 30)',
+    onBackground: 'rgb(21, 21, 59)',
     surface: 'rgb(255, 255, 255)',
-    onSurface: 'rgb(27, 27, 30)',
+    onSurface: 'rgb(21, 21, 59)',
     surfaceVariant: 'rgb(225, 227, 232)',
     onSurfaceVariant: 'rgb(68, 71, 75)',
 

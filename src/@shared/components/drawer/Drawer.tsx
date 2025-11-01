@@ -41,7 +41,8 @@ const ThemedDrawer = () => {
   const { isOpen, close } = useDrawer();
   const { colors } = useAppTheme();
   const { logout } = useAuth();
-  const { navigate } = useRouter();
+  const { navigate, push } = useRouter();
+  const { user } = useAuth();
 
   const iconSize = 32;
 
@@ -79,10 +80,55 @@ const ThemedDrawer = () => {
                 close();
               }}
             />
+
+            {user && user.role === 'provider' && (
+              <>
+                <Drawer.Item
+                  icon={({ color }) => <MaterialIcon color={color} size={iconSize} name={'wallet'} />}
+                  label="Wallet"
+                  onPress={() => {
+                    navigate('/(app)/wallet')
+                    close();
+                  }}
+                />
+                <Drawer.Item
+                  icon={({ color }) => <MaterialIcon color={color} size={iconSize} name={'view-list'} />}
+                  label="Plans"
+                  onPress={() => {
+                    navigate('/(app)/plans')
+                    close();
+                  }}
+                />
+              </>
+            )}
+
             <Drawer.Item
               icon={({ color }) => <MaterialIcon color={color} size={iconSize} name={'info'} />}
               label="About Us"
               onPress={() => {
+                push({
+                  pathname: '/(app)/page',
+                  params: { name: 'aboutUs' }
+                });
+                close();
+              }}
+            />
+            <Drawer.Item
+              icon={({ color }) => <MaterialIcon color={color} size={iconSize} name={'contact-phone'} />}
+              label="Contact Us"
+              onPress={() => {
+                navigate('/(app)/contact')
+                close();
+              }}
+            />
+            <Drawer.Item
+              icon={({ color }) => <MaterialIcon color={color} size={iconSize} name={'privacy-tip'} />}
+              label="Privacy Policy"
+              onPress={() => {
+                push({
+                  pathname: '/(app)/page',
+                  params: { name: 'privacyPolicy' }
+                });
                 close();
               }}
             />

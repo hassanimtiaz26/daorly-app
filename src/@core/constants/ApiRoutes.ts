@@ -5,6 +5,9 @@ export const ApiRoutes: any = {
     confirmCode: 'auth/confirm-code',
     user: 'user',
   },
+  business: {
+    index: 'business',
+  },
   complete: {
     data: 'business/form-data',
     business: 'business',
@@ -45,4 +48,7 @@ export const ApiRoutes: any = {
     index: 'user',
     update: 'user'
   },
+  page: {
+    name: (name: string) => `pages/${name}`,
+  }
 }

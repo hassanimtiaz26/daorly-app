@@ -71,7 +71,7 @@ const OrderScreen = () => {
   const formSchema = z.object({
     description: z.string().trim().min(1, 'Description is required'),
     date: z.string().trim().min(1, 'Date is required'),
-    photos: z.array(z.any()).min(1, 'At least one photo is required'),
+    photos: z.array(z.any()).optional(),
     discountCode: z.string().trim().optional(),
     useProfileDetails: z.boolean(),
     phoneNumber: z.string().trim().optional(),

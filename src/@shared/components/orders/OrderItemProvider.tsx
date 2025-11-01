@@ -19,9 +19,10 @@ import OrderAcceptContent from './OrderAcceptContent';
 type Props = {
   order: TOrder;
   onRefreshOrders: () => void;
+  hasIcon?: boolean;
 }
 
-const OrderItemProvider: FC<Props> = ({ order, onRefreshOrders }) => {
+const OrderItemProvider: FC<Props> = ({ order, onRefreshOrders, hasIcon }) => {
   const { colors } = useAppTheme();
   const editableStatuses: TOrderStatus[] = useMemo(() => ['pending', 'waiting_confirmation'], []);
   const { showDialog } = useDialog();
@@ -141,6 +142,31 @@ const OrderItemProvider: FC<Props> = ({ order, onRefreshOrders }) => {
 
   const address = useMemo(() => `${order.address}, ${order.area.name}, ${order.area.city.name}`, [order]);
 
+  const renderImage = (props) => {
+    if (hasIcon) {
+      return null;
+    }
+
+    return (
+      <Image
+        style={{ width: 54, height: 54, borderRadius: 12 }}
+        source={order.service.image ? { uri: order.service.image.media.url } : require('@/assets/images/placeholder.png')} />
+    );
+  };
+
+  const renderTitle = () => {
+    if (hasIcon) {
+      return (
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+          {order.businessOffer ? <MaterialIcon name={'hourglass-top'} size={18} /> : <MaterialIcon name={'schedule'} size={18} />}
+          <Text>{order.service.name}</Text>
+        </View>
+      )
+    }
+
+    return <Text>{order.service.name}</Text>;
+  }
+
   return (
     <List.Accordion
       style={{
@@ -150,15 +176,12 @@ const OrderItemProvider: FC<Props> = ({ order, onRefreshOrders }) => {
         borderRadius: 12,
         backgroundColor: colors.surface,
       }}
-      title={order.service.name}
+      titleStyle={{ paddingBottom: 4 }}
+      title={renderTitle()}
       description={order.description}
       descriptionNumberOfLines={1}
       titleNumberOfLines={1}
-      left={props => (
-        <Image
-          style={{ width: 54, height: 54, borderRadius: 12 }}
-          source={order.service.image ? { uri: order.service.image.media.url } : require('@/assets/images/placeholder.png')} />
-      )}>
+      left={renderImage}>
       <View style={{
         backgroundColor: colors.secondaryContainer,
         borderRadius: 12,
@@ -168,13 +191,25 @@ const OrderItemProvider: FC<Props> = ({ order, onRefreshOrders }) => {
         paddingLeft: 12,
         paddingRight: 12,
       }}>
-        <OrderListItem text={order.service.name} icon={'build'} />
+
+        {
+          ['confirmed', 'done', 'canceled'].includes(order.status) ?
+            <OrderListItem text={order.user.profile.firstName} icon={'person'} /> :
+            <OrderListItem text={order.service.name} icon={'build'} />
+        }
+
         <Divider style={{ marginVertical: 8 }} />
         <OrderListItem text={order.description} icon={'description'} />
         <Divider style={{ marginVertical: 8 }} />
         <OrderListItem text={DateTime.fromJSDate(new Date(order.scheduleAt)).toLocaleString()} icon={'calendar-month'} />
         <Divider style={{ marginVertical: 8 }} />
         <OrderListItem text={address} icon={'location-pin'} />
+        {['confirmed', 'done', 'canceled'].includes(order.status) && (
+          <>
+            <Divider style={{ marginVertical: 8 }} />
+            <OrderListItem text={order.user.phoneNumber} icon={'phone'} />
+          </>
+        )}
 
         {'businessOffer' in order && order.businessOffer && (
           <>
@@ -209,6 +244,13 @@ const OrderItemProvider: FC<Props> = ({ order, onRefreshOrders }) => {
                 </TouchableOpacity>
               </View>
             )}
+          </>
+        )}
+
+        {order.status === 'canceled' && (
+          <>
+            <Divider style={{ marginVertical: 8 }} />
+            <OrderListItem text={order.cancellationReason || (order.cancelledBy === 'provider' ? t('order.canceled.you') : t('order.canceled.client'))} icon={'close'} />
           </>
         )}
 

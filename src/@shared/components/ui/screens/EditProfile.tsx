@@ -20,7 +20,7 @@ import { TCity, TSelectValues } from '@core/types/general.type';
 type Props = ViewProps & {
   buttonText?: string;
   onSave: () => void;
-  fetchProfile?: boolean;
+  isEdit?: boolean;
 };
 
 const styles = StyleSheet.create({
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   }
 });
 
-const EditProfile: FC<Props> = ({ buttonText, onSave, fetchProfile, ...props }) => {
+const EditProfile: FC<Props> = ({ buttonText, onSave, isEdit, ...props }) => {
   const { t } = useTranslation();
   const { get, post, loading } = useFetch();
   const { user } = useAuth();
@@ -74,7 +74,7 @@ const EditProfile: FC<Props> = ({ buttonText, onSave, fetchProfile, ...props }) 
   }, [register]);
 
   useEffect(() => {
-    if (user && fetchProfile) {
+    if (user && isEdit) {
       reset({
         firstName: user.profile.firstName,
         lastName: user.profile.lastName,
@@ -82,7 +82,7 @@ const EditProfile: FC<Props> = ({ buttonText, onSave, fetchProfile, ...props }) 
         address: user.profile.address || '',
       });
     }
-  }, [user, reset, fetchProfile]);
+  }, [user, reset, isEdit]);
 
   useEffect(() => {
     getCities();
@@ -106,7 +106,7 @@ const EditProfile: FC<Props> = ({ buttonText, onSave, fetchProfile, ...props }) 
           error: '',
         });
 
-        if (user && fetchProfile) {
+        if (user && isEdit) {
           const userArea = user?.profile?.area;
           const userCityId = userArea?.cityId;
 
@@ -150,7 +150,7 @@ const EditProfile: FC<Props> = ({ buttonText, onSave, fetchProfile, ...props }) 
       },
       error: (error) => console.error('Error fetching cities:', error),
     });
-  }, [get, fetchProfile, user, setAreas, setCities, setValue]);
+  }, [get, isEdit, user, setAreas, setCities, setValue]);
 
   const handleTextChange = useCallback((inputControl: any) => {
     trigger(inputControl).then();

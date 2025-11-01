@@ -1,7 +1,7 @@
 import { Divider, List, Text } from 'react-native-paper';
 import { TOrder, TOrderOffer, TOrderStatus } from '@core/types/order.type';
 import { useAppTheme } from '@core/hooks/useAppTheme';
-import { FC, useMemo, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { Image } from 'expo-image';
 import { RefreshControl, TouchableOpacity, View } from 'react-native';
 import OrderListItem from '@components/orders/OrderListITem';
@@ -121,6 +121,13 @@ const OrderItemClient: FC<Props> = ({ order, onRefreshOrders }) => {
             <OrderListItem text={acceptedOffer.price.toLocaleString('en-US') + ' SP'} icon={'attach-money'} />
             <Divider style={{ marginVertical: 8 }} />
             <OrderListItem text={acceptedOffer.phoneNumber} icon={'phone'} />
+          </>
+        )}
+
+        {order.status === 'canceled' && (
+          <>
+            <Divider style={{ marginVertical: 8 }} />
+            <OrderListItem text={order.cancellationReason || (order.cancelledBy === 'client' ? t('order.canceled.you') : t('order.canceled.provider'))} icon={'close'} />
           </>
         )}
 

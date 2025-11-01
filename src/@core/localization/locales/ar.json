@@ -31,7 +31,8 @@
     "reject": "Reject",
     "price": "Price",
     "back": "Back",
-    "close": "Close"
+    "close": "Close",
+    "newOrders": "New Orders"
   },
   "errors": {
     "date": {
@@ -82,6 +83,11 @@
       "photos": "Add photos for your problem",
       "discount": "Add code for discount",
       "existingProfile": "Use same profile address and contact details"
+    },
+    "canceled": {
+      "you": "Canceled by You",
+      "client": "Canceled by Client",
+      "provider": "Canceled by Provider"
     },
     "offer": {
       "accept": "Accept Offer",

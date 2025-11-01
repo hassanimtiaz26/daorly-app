@@ -1,5 +1,6 @@
 import { TArea } from '@core/types/general.type';
 import { TService } from '@core/types/service.type';
+import { TCategory } from '@core/types/category.type';
 
 export type TUser = {
   id: number;
@@ -27,7 +28,8 @@ export type TUserProfile = {
 export type TBusinessAccount = {
   id: number;
   name: string;
-  services: TService[];
+  services: TCategory[];
+  categories: TCategory[];
   areas: TArea[];
   user: TUser;
 }

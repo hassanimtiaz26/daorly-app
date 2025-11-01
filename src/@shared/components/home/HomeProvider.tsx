@@ -1,9 +1,9 @@
-import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppTheme } from '@core/hooks/useAppTheme';
 import { useFetch } from '@core/hooks/useFetch';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { useAuth } from '@core/hooks/useAuth';
 import { TMainSlider } from '@core/types/general.type';
 import { MD3Colors } from 'react-native-paper/lib/typescript/types';
@@ -11,11 +11,13 @@ import { TCategory } from '@core/types/category.type';
 import { TOrder } from '@core/types/order.type';
 import { ApiRoutes } from '@core/constants/ApiRoutes';
 import Feather from '@expo/vector-icons/Feather';
-import { List, Text } from 'react-native-paper';
+import { Divider, List, Text } from 'react-native-paper';
 import ThemedHeader from '@components/ui/elements/ThemedHeader';
 import HomeSlider from '@components/home/HomeSlider';
 import OrderItemProvider from '@components/orders/OrderItemProvider';
 import { useDrawer } from '@core/hooks/useDrawer';
+import MaterialIcon from '@expo/vector-icons/MaterialIcons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -73,7 +75,7 @@ const HomeProvider = () => {
     loadData();
   }, []);
 
-  const loadData = () => {
+  const loadData = useCallback(() => {
     get(ApiRoutes.provider.home).subscribe({
       next: (response) => {
         if (response && 'data' in response) {
@@ -86,7 +88,14 @@ const HomeProvider = () => {
         setRefreshing(false);
       }
     })
-  };
+  }, [setSliderData, setOrders, get]);
+
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     loadData();
+  //     return () => {};
+  //   }, [loadData])
+  // );
 
   const onRefreshData = () => {
     setRefreshing(true);
@@ -149,14 +158,21 @@ const HomeProvider = () => {
 
       {
         orders.length > 0 && (
-          <List.Section style={{ paddingHorizontal: 20, gap: 10 }}>
-            {orders.map((order) => (
-              <OrderItemProvider
-                key={order.id}
-                order={order}
-                onRefreshOrders={() => loadData()} />
-            ))}
-          </List.Section>
+          <View style={{ marginTop: 12 }}>
+            <View style={{ paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              <MaterialCommunityIcons name={'clipboard-text-outline'} size={20} />
+              <Text variant={'titleMedium'}>{t('general.newOrders')}</Text>
+            </View>
+            <List.Section style={{ paddingHorizontal: 20, gap: 10 }}>
+              {orders.map((order) => (
+                <OrderItemProvider
+                  hasIcon={true}
+                  key={order.id}
+                  order={order}
+                  onRefreshOrders={() => loadData()} />
+              ))}
+            </List.Section>
+          </View>
         )
       }
     </ScrollView>

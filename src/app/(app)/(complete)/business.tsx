@@ -19,6 +19,7 @@ import ThemedButton from '@components/ui/buttons/ThemedButton';
 import { ApiRoutes } from '@core/constants/ApiRoutes';
 import { TService } from '@core/types/service.type';
 import { useRouter } from 'expo-router';
+import EditBusiness from '@components/ui/screens/EditBusiness';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -70,136 +71,10 @@ const BusinessAccount = () => {
   const { t } = useTranslation();
   const { colors } = useAppTheme();
   const styles = createStyles(colors);
-
-  const { get, post, loading } = useFetch();
-  const { setUser } = useAuth();
   const { replace } = useRouter();
 
-  const editBusinessSchema = z.object({
-    name: z.string().trim().min(3, { message: t('errors.minLength', { length: 3 }) }),
-    services: z.array(z.any()).min(1, 'At least one Service is required'),
-    areas: z.array(z.any()).min(1, 'At least one Area is required'),
-  });
-  type EditBusinessFormType = z.infer<typeof editBusinessSchema>;
-  const {
-    register,
-    control,
-    handleSubmit,
-    formState: { errors, isValid },
-    setValue,
-    trigger,
-    reset,
-  } = useForm<EditBusinessFormType>({
-    resolver: zodResolver(editBusinessSchema),
-  });
-
-  const [services, setServices] = useState<TSelectValues>({
-    value: '',
-    list: [],
-    selectedList: [],
-    error: '',
-  });
-  const [areas, setAreas] = useState<TSelectValues>({
-    value: '',
-    list: [],
-    selectedList: [],
-    error: '',
-  });
-
-  useEffect(() => {
-    register('services');
-    register('areas');
-  }, [register]);
-
-  useEffect(() => {
-    get(ApiRoutes.complete.data)
-      .subscribe({
-        next: (response) => {
-          if (response && 'data' in response) {
-            const servicesData: TService[] = response.data.services;
-            const mappedServices = servicesData.map((item) => ({
-              _id: item.id.toString(),
-              value: item.name,
-            }));
-            setServices({
-              value: '',
-              list: mappedServices,
-              selectedList: [],
-              error: '',
-            });
-
-            const areasData: TArea[] = response.data.areas;
-            const mappedAreas = areasData.map((item) => ({
-              _id: item.id.toString(),
-              value: item.name,
-            }));
-            setAreas({
-              value: '',
-              list: mappedAreas,
-              selectedList: [],
-              error: '',
-            });
-          }
-        }
-      })
-  }, []);
-
-  const handleTextChange = useCallback((inputControl: any) => {
-    trigger(inputControl).then();
-  }, [trigger]);
-
-  const onServicesChange = (value: any) => {
-    console.log('Services Changed');
-    console.log(JSON.stringify(value, null, 2));
-
-    setServices({
-      ...services,
-      value: value.text,
-      selectedList: value.selectedList,
-    });
-
-    const selectedServices = value.selectedList;
-    setValue('services', selectedServices.map((item: any) => parseInt(item._id)), {
-      shouldDirty: true,
-      shouldTouch: true,
-      shouldValidate: true,
-    });
-  };
-
-  const onAreasChange = (value: any) => {
-    console.log('Areas Changed');
-    console.log(JSON.stringify(value, null, 2));
-    setAreas({
-      ...areas,
-      value: value.text,
-      selectedList: value.selectedList,
-    });
-
-    const selectedAreas = value.selectedList;
-    setValue('areas', selectedAreas.map((item: any) => parseInt(item._id)), {
-      shouldDirty: true,
-      shouldTouch: true,
-      shouldValidate: true,
-    });
-  }
-
-  const onSubmit = (data: EditBusinessFormType) => {
-    if (!isValid) return;
-
-    post(ApiRoutes.complete.business, data)
-      .subscribe({
-        next: (response) => {
-          console.log('Register Response', response);
-          if (response && 'data' in response) {
-            if ('user' in response.data) {
-              const user = response.data.user;
-              setUser(user);
-              replace('/(app)/(tabs)/home');
-            }
-          }
-        }
-      });
-    console.log(data);
+  const onSubmit = () => {
+    replace('/(app)/(tabs)/home');
   }
 
   return (
@@ -212,68 +87,10 @@ const BusinessAccount = () => {
         <Text variant={'titleLarge'}>{t('auth.register.title')}</Text>
         <Text style={styles.title} variant={'titleMedium'}>{t('auth.business.title')}</Text>
 
-        <View style={styles.textInputContainer}>
-
-            <Controller
-              control={control}
-              name={'name'}
-              render={({
-                         field: { onChange, onBlur, value },
-                         fieldState: { error },
-                       }) => (
-                <View>
-                  <ThemedTextInput
-                    disabled={loading}
-                    onBlur={onBlur}
-                    onChangeText={(e) => {
-                      onChange(e);
-                      handleTextChange('name');
-                    }}
-                    value={value}
-                    error={!!error}
-                    label={t('general.businessName')}
-                    right={<TextInput.Icon
-                      icon={({ size, color }) => (
-                        <Feather name="user" size={size} color={color} />
-                      )}
-                    />} />
-                  {errors.name && (
-                    <ThemedInputError text={errors.name?.message} />
-                  )}
-                </View>
-              )}
-            />
-
-            <ThemedSelect
-              disabled={loading}
-              label={t('general.services')}
-              arrayList={services.list}
-              selectedArrayList={services.selectedList}
-              multiEnable={true}
-              value={services.value}
-              onSelection={onServicesChange} />
-
-            <ThemedSelect
-              disabled={loading}
-              label={t('general.availableAreas')}
-              arrayList={areas.list}
-              selectedArrayList={areas.selectedList}
-              multiEnable={true}
-              value={areas.value}
-              onSelection={onAreasChange} />
-
-
-        </View>
+        <EditBusiness
+          style={styles.innerContentContainer}
+          onSave={onSubmit} />
       </View>
-
-      <View style={styles.buttonContainer}>
-        <ThemedButton
-          disabled={!isValid || loading}
-          loading={loading}
-          onPress={handleSubmit(onSubmit)}
-          buttonStyle={'secondary'}>{t('general.register')}</ThemedButton>
-      </View>
-
 
     </ScrollView>
   );
