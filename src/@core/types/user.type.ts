@@ -1,6 +1,7 @@
 import { TArea } from '@core/types/general.type';
 import { TService } from '@core/types/service.type';
 import { TCategory } from '@core/types/category.type';
+import { TSubscription } from '@core/types/subscription.type';
 
 export type TUser = {
   id: number;
@@ -11,6 +12,7 @@ export type TUser = {
   profileCompletedAt: boolean;
   businessAccountCompletedAt: boolean;
   profile: TUserProfile;
+  subscription: TSubscription;
   businessAccounts?: TBusinessAccount[];
 }
 
@@ -22,6 +24,7 @@ export type TUserProfile = {
   lastName: string;
   email: string;
   address: string;
+  balance: number;
   area: TArea;
 }
 
@@ -32,4 +35,12 @@ export type TBusinessAccount = {
   categories: TCategory[];
   areas: TArea[];
   user: TUser;
+}
+
+export type TUserTransaction = {
+  id: number;
+  description: string;
+  amount: number;
+  createdAt: Date;
+  updatedAt: Date;
 }

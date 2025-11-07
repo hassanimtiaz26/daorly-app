@@ -44,9 +44,14 @@ export const ApiRoutes: any = {
     index: 'services',
     show: (id: number) => `services/${id}`,
   },
+  subscriptions: {
+    plans: 'subscriptions/plans',
+    subscribe: 'subscriptions/subscribe',
+  },
   user: {
     index: 'user',
-    update: 'user'
+    update: 'user',
+    wallet: 'user/wallet',
   },
   page: {
     name: (name: string) => `pages/${name}`,

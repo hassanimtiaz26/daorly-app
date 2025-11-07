@@ -3,10 +3,9 @@ import { TOrder, TOrderOffer, TOrderStatus } from '@core/types/order.type';
 import { useAppTheme } from '@core/hooks/useAppTheme';
 import { FC, useMemo, useState } from 'react';
 import { Image } from 'expo-image';
-import { RefreshControl, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import OrderListItem from '@components/orders/OrderListITem';
 import { DateTime } from 'luxon';
-import ServicesScreenShimmer from '@components/shimmers/ServicesScreenShimmer';
 import { useDialog } from '@core/hooks/useDialog';
 import { ApiRoutes } from '@core/constants/ApiRoutes';
 import { useFetch } from '@core/hooks/useFetch';
@@ -15,6 +14,7 @@ import { t } from 'i18next';
 import { useSnackbar } from '@core/hooks/useSnackbar';
 import { useBottomSheet } from '@core/hooks/useBottomSheet';
 import OrderAcceptContent from './OrderAcceptContent';
+import OrderCancelContent from '@components/orders/OrderCancelContent';
 
 type Props = {
   order: TOrder;
@@ -39,23 +39,15 @@ const OrderItemProvider: FC<Props> = ({ order, onRefreshOrders, hasIcon }) => {
   ), [order.offers]);
 
   const onCancelOrder = () => {
-    showDialog({
-      variant: 'error',
-      type: 'confirmation',
-      title: 'Cancel Order',
-      message: 'Are you sure you want to cancel this order?',
-      onConfirm: () => {
-        post(ApiRoutes.orders.cancel(order.id), { orderId: order.id })
-          .subscribe({
-            next: (response) => {
-              if (response.success) {
-                onRefreshOrders();
-                snackbar.show({ message: response.message });
-              }
-            }
-          })
-      },
-    })
+    open(
+      <OrderCancelContent
+        order={order}
+        onCancelOrder={(response) => {
+          onRefreshOrders();
+          snackbar.show({ message: response.message });
+        }}
+      />
+    );
   };
 
   const onAcceptOrder = () => {
@@ -68,31 +60,14 @@ const OrderItemProvider: FC<Props> = ({ order, onRefreshOrders, hasIcon }) => {
         }}
       />
     );
-    // showDialog({
-    //   variant: 'success',
-    //   type: 'confirmation',
-    //   title: 'Accept Order',
-    //   message: 'Are you sure you want to confirm this order?',
-    //   onConfirm: () => {
-    //     post(ApiRoutes.orders.makeOffer(order.id), { orderId: order.id })
-    //       .subscribe({
-    //         next: (response) => {
-    //           if (response.success) {
-    //             onRefreshOrders();
-    //             snackbar.show({ message: response.message });
-    //           }
-    //         }
-    //       })
-    //   },
-    // })
   }
 
   const onCompleteOrder = () => {
     showDialog({
       variant: 'success',
       type: 'confirmation',
-      title: 'Complete Order',
-      message: 'Are you sure you want to complete this order?',
+      title: t('order.complete.title'),
+      message: t('order.complete.message'),
       onConfirm: () => {
         post(ApiRoutes.orders.completeOrder(order.id), { orderId: order.id })
           .subscribe({
@@ -111,8 +86,8 @@ const OrderItemProvider: FC<Props> = ({ order, onRefreshOrders, hasIcon }) => {
     showDialog({
       variant: 'error',
       type: 'confirmation',
-      title: 'Reject Order',
-      message: 'Are you sure you want to reject this order?',
+      title: t('order.reject.title'),
+      message: t('order.reject.message'),
       onConfirm: () => {
         post(ApiRoutes.orders.rejectOrder(order.id), { orderId: order.id })
           .subscribe({
@@ -320,7 +295,7 @@ const OrderItemProvider: FC<Props> = ({ order, onRefreshOrders, hasIcon }) => {
                 color={colors.onErrorContainer}
                 name={'close'}
                 size={20} />
-              <Text style={{ color: colors.onErrorContainer }}>{t('order.cancel')}</Text>
+              <Text style={{ color: colors.onErrorContainer }}>{t('order.cancel.title')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -341,7 +316,7 @@ const OrderItemProvider: FC<Props> = ({ order, onRefreshOrders, hasIcon }) => {
                 color={colors.onPrimary}
                 name={'check'}
                 size={20} />
-              <Text style={{ color: colors.onPrimary }}>{t('order.complete')}</Text>
+              <Text style={{ color: colors.onPrimary }}>{t('order.complete.title')}</Text>
             </TouchableOpacity>
           </View>
         )}

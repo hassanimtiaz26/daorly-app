@@ -151,7 +151,7 @@ const OrderItemClient: FC<Props> = ({ order, onRefreshOrders }) => {
                 color={colors.onErrorContainer}
                 name={'close'}
                 size={20} />
-              <Text style={{ color: colors.onErrorContainer }}>{t('order.cancel')}</Text>
+              <Text style={{ color: colors.onErrorContainer }}>{t('order.cancel.title')}</Text>
             </TouchableOpacity>
           </View>
         )}

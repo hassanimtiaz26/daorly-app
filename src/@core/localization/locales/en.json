@@ -32,7 +32,9 @@
     "price": "Price",
     "back": "Back",
     "close": "Close",
-    "newOrders": "New Orders"
+    "newOrders": "New Orders",
+    "balance": "Balance",
+    "transactions": "Transactions"
   },
   "errors": {
     "date": {
@@ -100,8 +102,26 @@
         "phoneNumber": "Add alternative contacting number"
       }
     },
-    "accept": "Accept Order",
-    "cancel": "Cancel Order",
-    "complete": "Complete Order"
+    "accept": {
+      "title": "Accept Order",
+      "message": "Are you sure you want to accept the order?"
+    },
+    "cancel": {
+      "title": "Cancel Order",
+      "message": "Are you sure you want to cancel the order?",
+      "reason": {
+        "label": "Cancellation Reason",
+        "placeholder": "Please add the reason for order cancellation...",
+        "required": "Order cancellation reason is required"
+      }
+    },
+    "complete": {
+      "title": "Complete Order",
+      "message": "Are you sure you want to complete the order?"
+    },
+    "reject": {
+      "title": "Reject Order",
+      "message": "Are you sure you want to reject this order?"
+    }
   }
 }

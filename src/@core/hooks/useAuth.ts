@@ -14,7 +14,7 @@ type AuthState = {
   authenticate: () => Observable<any>;
   login: (user: any) => void;
   logout: () => void;
-  setUser: (user: any) => void;
+  setUser: (user: TUser) => void;
 }
 
 export const useAuth = create<AuthState>((set) => ({
@@ -38,6 +38,6 @@ export const useAuth = create<AuthState>((set) => ({
         set({ isAuthenticated: false, user: null });
       });
   },
-  setUser: (user: any) => set((state) => ({ user: { ...state.user, ...user } })),
+  setUser: (user: TUser) => set((state) => ({ user })),
   setIsLoading: (isLoading: boolean) => set({ isLoading }),
 }));
