@@ -81,8 +81,8 @@ const PlansScreen = () => {
       </ThemedHeader>
 
       <View style={{ padding: 32, gap: 10 }}>
-        <Text style={{ fontWeight: 'bold', textAlign: 'center' }} variant={'headlineMedium'}>Pick a plan that's right for your business</Text>
-        <Text style={{ textAlign: 'center' }}>Pricing prices for businesses at every stage of growth</Text>
+        <Text style={{ fontWeight: 'bold', textAlign: 'center' }} variant={'headlineMedium'}>{t('subscription.title')}</Text>
+        <Text style={{ textAlign: 'center' }}>{t('subscription.subtitle')}</Text>
       </View>
 
       {user.subscription ? (

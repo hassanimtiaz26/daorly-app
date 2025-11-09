@@ -123,5 +123,13 @@
       "title": "Reject Order",
       "message": "Are you sure you want to reject this order?"
     }
+  },
+  "subscription": {
+    "title": "Pick a plan that's right for your business",
+    "subtitle": "Pricing prices for businesses at every stage of growth",
+    "dialog": {
+      "title": "Subscription",
+      "message": "Are you sure you want to subscribe to this plan?"
+    }
   }
 }

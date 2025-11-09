@@ -21,7 +21,8 @@ const languageDetectorPlugin: any = {
       if (storedLanguage) {
         locale = storedLanguage;
       } else {
-        locale = getLocales()[0]?.languageCode || 'en';
+        // locale = getLocales()[0]?.languageCode || 'en';
+        locale = 'en';
       }
 
       const isRTL = RTL_LANGUAGES.includes(locale);

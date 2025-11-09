@@ -20,6 +20,7 @@ import { TMainSlider } from '@core/types/general.type';
 import { useSnackbar } from '@core/hooks/useSnackbar';
 import { ApiRoutes } from '@core/constants/ApiRoutes';
 import { useDrawer } from '@core/hooks/useDrawer';
+import NotificationButton from '@components/ui/NotificationButton';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -126,32 +127,10 @@ const HomeClient = () => {
           </View>
 
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
-            <Feather
-              onPress={() => {
-                navigate('/(app)/notifications')
-              }}
-              name={'bell'} size={24} color={colors.onPrimary} />
-            {/*<Feather
-              onPress={() => logout()}
-              name={'log-out'} size={24} color={colors.onPrimary} />*/}
+            <NotificationButton />
             <Feather
               onPress={() => drawer.open()}
               name={'menu'} size={24} color={colors.onPrimary} />
-            {/*<FAB
-              mode={'flat'}
-              variant={'surface'}
-              size={'small'}
-              onPress={() => {
-                navigate('/(app)/notifications')
-              }}
-              icon={({ size, color }) => <Feather name={'bell'} size={size} color={color} />} />
-
-            <FAB
-              mode={'flat'}
-              variant={'surface'}
-              size={'small'}
-              onPress={() => logout()}
-              icon={({ size, color }) => <Feather name={'log-out'} size={size} color={color} />} />*/}
           </View>
         </View>
 

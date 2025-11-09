@@ -18,6 +18,7 @@ import { useDialog } from '@core/hooks/useDialog';
 import OrderItemClient from '@components/orders/OrderItemClient';
 import { useAuth } from '@core/hooks/useAuth';
 import OrderItemProvider from '@components/orders/OrderItemProvider';
+import { useLocalSearchParams } from 'expo-router';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -33,7 +34,9 @@ const createStyles = (colors: MD3Colors) => StyleSheet.create({
   },
 });
 
-
+type OrderSearchParams = {
+  orderStatus: TOrderStatus | undefined;
+}
 
 export default function OrderScreen() {
   const { t } = useTranslation();
@@ -51,12 +54,25 @@ export default function OrderScreen() {
     { key: 'canceled', label: 'Canceled', icon: 'cancel' },
     { key: 'done', label: 'Done', icon: 'check' },
   ]), [user]);
-  const [status, setStatus] = useState<TOrderStatus>('pending');
+  const [status, setStatus] = useState<TOrderStatus>(null);
   const [orders, setOrders] = useState<TOrder[]>([]);
   const { showDialog } = useDialog();
 
+  const { orderStatus } = useLocalSearchParams<OrderSearchParams>();
+
   useEffect(() => {
-    getOrders();
+    console.log('orderStatus', orderStatus);
+    if (orderStatus) {
+      setStatus(orderStatus);
+    } else {
+      setStatus('pending');
+    }
+  }, [orderStatus]);
+
+  useEffect(() => {
+    if (status) {
+      getOrders();
+    }
   }, [status]);
 
   const getOrders = useCallback(() => {

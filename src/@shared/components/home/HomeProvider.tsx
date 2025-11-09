@@ -1,4 +1,4 @@
-import { Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, RefreshControl, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppTheme } from '@core/hooks/useAppTheme';
@@ -11,13 +11,14 @@ import { TCategory } from '@core/types/category.type';
 import { TOrder } from '@core/types/order.type';
 import { ApiRoutes } from '@core/constants/ApiRoutes';
 import Feather from '@expo/vector-icons/Feather';
-import { Divider, List, Text } from 'react-native-paper';
+import { Badge, Divider, List, Text } from 'react-native-paper';
 import ThemedHeader from '@components/ui/elements/ThemedHeader';
 import HomeSlider from '@components/home/HomeSlider';
 import OrderItemProvider from '@components/orders/OrderItemProvider';
 import { useDrawer } from '@core/hooks/useDrawer';
 import MaterialIcon from '@expo/vector-icons/MaterialIcons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import NotificationButton from '@components/ui/NotificationButton';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -127,14 +128,7 @@ const HomeProvider = () => {
           </View>
 
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
-            <Feather
-              onPress={() => {
-                navigate('/(app)/notifications')
-              }}
-              name={'bell'} size={24} color={colors.onPrimary} />
-            {/*<Feather
-              onPress={() => logout()}
-              name={'log-out'} size={24} color={colors.onPrimary} />*/}
+            <NotificationButton />
             <Feather
               onPress={() => drawer.open()}
               name={'menu'} size={24} color={colors.onPrimary} />

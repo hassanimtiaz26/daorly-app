@@ -9,12 +9,14 @@ import { useFetch } from '@core/hooks/useFetch';
 import { ApiRoutes } from '@core/constants/ApiRoutes';
 import { useDialog } from '@core/hooks/useDialog';
 import { useAuth } from '@core/hooks/useAuth';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   plan: TPlan;
 }
 
 const PlanItem: FC<Props> = ({ plan }) => {
+  const { t } = useTranslation();
   const { colors } = useAppTheme();
   const { post, loading, error } = useFetch();
   const { showDialog } = useDialog();
@@ -30,18 +32,26 @@ const PlanItem: FC<Props> = ({ plan }) => {
   }, [error]);
 
   const onSubscribe = () => {
-    post(ApiRoutes.subscriptions.subscribe, { planId: plan.id })
-      .subscribe({
-        next: (response) => {
-          if (response && response.success && 'data' in response) {
-            setUser({ ...user, subscription: response.data.subscription });
-            showDialog({
-              variant: 'success',
-              message: response.message,
-            })
-          }
-        }
-      })
+    showDialog({
+      variant: 'success',
+      type: 'confirmation',
+      title: t('subscription.dialog.title'),
+      message: t('subscription.dialog.message'),
+      onConfirm: () => {
+        post(ApiRoutes.subscriptions.subscribe, { planId: plan.id })
+          .subscribe({
+            next: (response) => {
+              if (response && response.success && 'data' in response) {
+                setUser({ ...user, subscription: response.data.subscription });
+                showDialog({
+                  variant: 'success',
+                  message: response.message,
+                })
+              }
+            }
+          });
+      }
+    });
   };
 
   return (

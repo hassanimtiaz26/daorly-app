@@ -29,6 +29,10 @@ export const ApiRoutes: any = {
   media: {
     upload: 'media',
   },
+  notifications: {
+    index: 'notifications',
+    markAsRead: (id: any) => `notifications/${id}/read`,
+  },
   orders: {
     index: 'orders',
     withStatus: (status: string) => `orders?status=${status}`,

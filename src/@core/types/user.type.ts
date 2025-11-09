@@ -11,6 +11,7 @@ export type TUser = {
   verifiedAt: boolean;
   profileCompletedAt: boolean;
   businessAccountCompletedAt: boolean;
+  unreadNotificationCount: number;
   profile: TUserProfile;
   subscription: TSubscription;
   businessAccounts?: TBusinessAccount[];
