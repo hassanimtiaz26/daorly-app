@@ -21,6 +21,7 @@ type Props = ViewProps & {
   buttonText?: string;
   onSave: () => void;
   isEdit?: boolean;
+  showReadonly?: boolean;
 };
 
 const styles = StyleSheet.create({
@@ -30,7 +31,7 @@ const styles = StyleSheet.create({
   }
 });
 
-const EditProfile: FC<Props> = ({ buttonText, onSave, isEdit, ...props }) => {
+const EditProfile: FC<Props> = ({ buttonText, onSave, showReadonly = false, isEdit, ...props }) => {
   const { t } = useTranslation();
   const { get, post, loading } = useFetch();
   const { user } = useAuth();
@@ -67,6 +68,12 @@ const EditProfile: FC<Props> = ({ buttonText, onSave, isEdit, ...props }) => {
     error: '',
   });
   const [areaDisabled, setAreaDisabled] = useState(true);
+
+  const [isReadonly, setIsReadonly] = useState(showReadonly);
+
+  useEffect(() => {
+    console.log(isReadonly);
+  }, []);
 
   useEffect(() => {
     console.log('register area');
@@ -252,6 +259,7 @@ const EditProfile: FC<Props> = ({ buttonText, onSave, isEdit, ...props }) => {
                    }) => (
             <View>
               <ThemedTextInput
+                readOnly={isReadonly}
                 disabled={loading}
                 onBlur={onBlur}
                 onChangeText={(e) => {
@@ -282,6 +290,7 @@ const EditProfile: FC<Props> = ({ buttonText, onSave, isEdit, ...props }) => {
                    }) => (
             <View>
               <ThemedTextInput
+                readOnly={isReadonly}
                 disabled={loading}
                 onBlur={onBlur}
                 onChangeText={(e) => {
@@ -321,7 +330,7 @@ const EditProfile: FC<Props> = ({ buttonText, onSave, isEdit, ...props }) => {
           />} />
 
         <ThemedSelect
-          disabled={loading}
+          disabled={loading || isReadonly}
           label={t('general.city')}
           arrayList={cities.list}
           selectedArrayList={cities.selectedList}
@@ -330,7 +339,7 @@ const EditProfile: FC<Props> = ({ buttonText, onSave, isEdit, ...props }) => {
           onSelection={onCityChange} />
 
         <ThemedSelect
-          disabled={areaDisabled || loading}
+          disabled={areaDisabled || loading || isReadonly}
           label={t('general.area')}
           arrayList={areas.list}
           selectedArrayList={areas.selectedList}
@@ -347,6 +356,7 @@ const EditProfile: FC<Props> = ({ buttonText, onSave, isEdit, ...props }) => {
                    }) => (
             <View>
               <ThemedTextInput
+                readOnly={isReadonly}
                 disabled={loading}
                 onBlur={onBlur}
                 onChangeText={(e) => {
@@ -370,11 +380,17 @@ const EditProfile: FC<Props> = ({ buttonText, onSave, isEdit, ...props }) => {
 
       </View>
 
-      <ThemedButton
-        disabled={!isValid || loading}
-        loading={loading}
-        onPress={handleSubmit(onSubmit)}
-        buttonStyle={'secondary'}>{buttonText || t('general.continue')}</ThemedButton>
+      {isReadonly ? (
+        <ThemedButton
+          onPress={() => setIsReadonly(!isReadonly)}
+          buttonStyle={'secondary'}>{t('general.edit')}</ThemedButton>
+        ) : (
+        <ThemedButton
+          disabled={!isValid || loading}
+          loading={loading}
+          onPress={handleSubmit(onSubmit)}
+          buttonStyle={'secondary'}>{buttonText || t('general.continue')}</ThemedButton>
+      )}
     </View>
   );
 }

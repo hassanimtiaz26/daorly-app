@@ -15,6 +15,7 @@ export default function AppLayout() {
           <Stack.Screen name="services" options={{ animation: 'fade_from_bottom' }} />
           <Stack.Screen name="order" options={{ animation: 'fade_from_bottom' }} />
           <Stack.Screen name="notifications" options={{ animation: 'fade_from_bottom' }} />
+          <Stack.Screen name="security" options={{ animation: 'fade_from_bottom' }} />
         </Stack>
       </View>
     </ColoredStatusBar>

@@ -30,6 +30,7 @@ import { Config } from '@core/constants/Config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as FileSystem from 'expo-file-system';
 import { useDialog } from '@core/hooks/useDialog';
+import { useAuth } from '@core/hooks/useAuth';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -67,6 +68,7 @@ const OrderScreen = () => {
   const { colors } = useAppTheme();
   const styles = createStyles(colors);
   const { canGoBack, back, replace } = useRouter();
+  const { user } = useAuth();
 
   const formSchema = z.object({
     description: z.string().trim().min(1, 'Description is required'),
@@ -157,7 +159,7 @@ const OrderScreen = () => {
   const [showCalendar, setShowCalendar] = useState(false);
   const [date, setDate] = useState(DateTime.now().toJSDate());
   const [minDate, setMinDate] = useState(DateTime.now().plus({ day: 2 }).toJSDate());
-  const [maxDate, setMaxDate] = useState(DateTime.now().plus({ day: 30 }).toJSDate());
+  // const [maxDate, setMaxDate] = useState(DateTime.now().plus({ day: 30 }).toJSDate());
 
   useEffect(() => {
     getCities();
@@ -495,83 +497,79 @@ const OrderScreen = () => {
               )} />
 
 
-            {!useProfileDetails && (
-              <>
-                <Controller
-                  control={control}
-                  name={'phoneNumber'}
-                  render={({ field: { onChange, onBlur, value }, fieldState: { error }}) => (
-                    <View>
-                      <ThemedTextInput
-                        keyboardType={'number-pad'}
-                        onBlur={onBlur}
-                        onChangeText={(e) => {
-                          onChange(e);
-                          handleTextChange('phoneNumber');
-                        }}
-                        value={value}
-                        error={!!error}
-                        label={t('general.phoneNumber')}
-                        left={<TextInput.Icon
-                          size={34}
-                          icon={({ size, color }) => (
-                            <SyriaFlag width={size} height={size} fill={color} />
-                          )}
-                        />}
-                        right={<TextInput.Icon size={18} icon={'phone'} />} />
-                      {errors.phoneNumber && (
-                        <ThemedInputError text={errors.phoneNumber?.message} />
+            <Controller
+              control={control}
+              name={'phoneNumber'}
+              render={({ field: { onChange, onBlur, value }, fieldState: { error }}) => (
+                <View>
+                  <ThemedTextInput
+                    disabled={useProfileDetails}
+                    keyboardType={'number-pad'}
+                    onBlur={onBlur}
+                    onChangeText={(e) => {
+                      onChange(e);
+                      handleTextChange('phoneNumber');
+                    }}
+                    value={value}
+                    error={!!error}
+                    label={t('general.phoneNumber')}
+                    left={<TextInput.Icon
+                      size={34}
+                      icon={({ size, color }) => (
+                        <SyriaFlag width={size} height={size} fill={color} />
                       )}
-                    </View>
-                  )} />
+                    />}
+                    right={<TextInput.Icon size={18} icon={'phone'} />} />
+                  {errors.phoneNumber && (
+                    <ThemedInputError text={errors.phoneNumber?.message} />
+                  )}
+                </View>
+              )} />
 
 
-                <ThemedSelect
-                  disabled={loading || isSubmitting}
-                  label={t('general.city')}
-                  arrayList={cities.list}
-                  selectedArrayList={cities.selectedList}
-                  multiEnable={false}
-                  value={cities.value}
-                  onSelection={onCityChange} />
+            <ThemedSelect
+              disabled={loading || isSubmitting || useProfileDetails}
+              label={t('general.city')}
+              arrayList={cities.list}
+              selectedArrayList={cities.selectedList}
+              multiEnable={false}
+              value={cities.value}
+              onSelection={onCityChange} />
 
-                <ThemedSelect
-                  disabled={areaDisabled || loading}
-                  label={t('general.area')}
-                  arrayList={areas.list}
-                  selectedArrayList={areas.selectedList}
-                  multiEnable={false}
-                  value={areas.value}
-                  onSelection={onAreaChange} />
+            <ThemedSelect
+              disabled={areaDisabled || loading || useProfileDetails}
+              label={t('general.area')}
+              arrayList={areas.list}
+              selectedArrayList={areas.selectedList}
+              multiEnable={false}
+              value={areas.value}
+              onSelection={onAreaChange} />
 
-                <Controller
-                  control={control}
-                  name={'address'}
-                  render={({ field: { onChange, onBlur, value }, fieldState: { error }}) => (
-                    <View>
-                      <ThemedTextInput
-                        onBlur={onBlur}
-                        onChangeText={(e) => {
-                          onChange(e);
-                          handleTextChange('address');
-                        }}
-                        value={value}
-                        error={!!error}
-                        disabled={loading || isSubmitting}
-                        label={t('general.address')}
-                        right={<TextInput.Icon
-                          icon={({ size, color }) => (
-                            <Feather name="map-pin" size={size} color={color} />
-                          )}
-                        />} />
-                      {errors.address && (
-                        <ThemedInputError text={errors.address?.message} />
+            <Controller
+              control={control}
+              name={'address'}
+              render={({ field: { onChange, onBlur, value }, fieldState: { error }}) => (
+                <View>
+                  <ThemedTextInput
+                    disabled={loading || isSubmitting || useProfileDetails}
+                    onBlur={onBlur}
+                    onChangeText={(e) => {
+                      onChange(e);
+                      handleTextChange('address');
+                    }}
+                    value={value}
+                    error={!!error}
+                    label={t('general.address')}
+                    right={<TextInput.Icon
+                      icon={({ size, color }) => (
+                        <Feather name="map-pin" size={size} color={color} />
                       )}
-                    </View>
-                  )} />
-
-              </>
-            )}
+                    />} />
+                  {errors.address && (
+                    <ThemedInputError text={errors.address?.message} />
+                  )}
+                </View>
+              )} />
 
             <ThemedButton
               disabled={!isValid || loading || isSubmitting}

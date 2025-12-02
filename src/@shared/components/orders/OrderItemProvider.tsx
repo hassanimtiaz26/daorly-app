@@ -191,7 +191,7 @@ const OrderItemProvider: FC<Props> = ({ order, onRefreshOrders, hasIcon }) => {
             <Divider style={{ marginVertical: 12 }} bold={true} />
             <OrderListItem text={order.businessOffer.message} icon={'description'} />
             <Divider style={{ marginVertical: 8 }} />
-            <OrderListItem text={order.businessOffer.price.toLocaleString('en-US') + ' SP'} icon={'attach-money'} />
+            <OrderListItem text={`$ ${order.businessOffer.price.toLocaleString('en-US')}`} icon={'attach-money'} />
             <Divider style={{ marginVertical: 8 }} />
             <OrderListItem text={order.businessOffer.phoneNumber} icon={'phone'} />
 

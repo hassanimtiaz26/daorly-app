@@ -34,7 +34,10 @@
     "close": "Close",
     "newOrders": "New Orders",
     "balance": "Balance",
-    "transactions": "Transactions"
+    "transactions": "Transactions",
+    "edit": "Edit",
+    "currentPassword": "Current Password",
+    "changePassword": "Change Password"
   },
   "errors": {
     "date": {

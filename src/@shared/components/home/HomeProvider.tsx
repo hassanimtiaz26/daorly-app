@@ -33,7 +33,7 @@ const createStyles = (colors: MD3Colors) => StyleSheet.create({
     width: '100%',
   },
   header: {
-    paddingBottom: 48,
+    paddingBottom: 32,
     marginBottom: -40,
   },
   content: {
@@ -64,7 +64,6 @@ const HomeProvider = () => {
   const { colors } = useAppTheme();
   const styles = createStyles(colors);
   const { get, loading } = useFetch();
-  const { navigate, push } = useRouter();
   const { user, logout } = useAuth();
 
   const [refreshing, setRefreshing] = useState(false);
@@ -122,9 +121,10 @@ const HomeProvider = () => {
           marginBottom: 14,
           paddingHorizontal: 6,
         }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-            <Feather name={'map-pin'} size={24} color={colors.onPrimary} />
-            <Text style={{ color: colors.onPrimary }} variant={'bodyMedium'}>{user.profile.address}</Text>
+          <View>
+            <Text
+              style={{ color: colors.onPrimary }}
+              variant={'titleLarge'}>{t('general.hello')} <Text style={{ fontWeight: 'bold', color: colors.onPrimary }}>{user.profile.firstName}</Text></Text>
           </View>
 
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
@@ -133,12 +133,6 @@ const HomeProvider = () => {
               onPress={() => drawer.open()}
               name={'menu'} size={24} color={colors.onPrimary} />
           </View>
-        </View>
-
-        <View style={{ paddingHorizontal: 6 }}>
-          <Text
-            style={{ color: colors.onPrimary }}
-            variant={'titleLarge'}>{t('general.hello')} <Text style={{ fontWeight: 'bold', color: colors.onPrimary }}>{user.profile.firstName}</Text></Text>
         </View>
       </ThemedHeader>
 

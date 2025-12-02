@@ -81,6 +81,15 @@ const ThemedDrawer = () => {
               }}
             />
 
+            <Drawer.Item
+              icon={({ color }) => <MaterialIcon color={color} size={iconSize} name={'security'} />}
+              label="Security"
+              onPress={() => {
+                navigate('/(app)/security')
+                close();
+              }}
+            />
+
             {user && user.role === 'provider' && (
               <>
                 <Drawer.Item

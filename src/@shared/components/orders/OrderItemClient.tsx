@@ -118,7 +118,7 @@ const OrderItemClient: FC<Props> = ({ order, onRefreshOrders }) => {
             <Divider style={{ marginVertical: 8 }} />
             <OrderListItem text={acceptedOffer.message} icon={'description'} />
             <Divider style={{ marginVertical: 8 }} />
-            <OrderListItem text={acceptedOffer.price.toLocaleString('en-US') + ' SP'} icon={'attach-money'} />
+            <OrderListItem text={`$ ${acceptedOffer.price.toLocaleString('en-US')}`} icon={'attach-money'} />
             <Divider style={{ marginVertical: 8 }} />
             <OrderListItem text={acceptedOffer.phoneNumber} icon={'phone'} />
           </>
@@ -173,7 +173,7 @@ const OrderItemClient: FC<Props> = ({ order, onRefreshOrders }) => {
           <Divider style={{ marginVertical: 8 }} />
           <OrderListItem text={offer.message} icon={'description'} />
           <Divider style={{ marginVertical: 8 }} />
-          <OrderListItem text={offer.price.toLocaleString('en-US') + ' SP'} icon={'attach-money'} />
+          <OrderListItem text={`$ ${offer.price.toLocaleString('en-US')}`} icon={'attach-money'} />
 
           {cancelableStatuses.includes(order.status) && (
             <View style={{ marginTop: 20, alignItems: 'center', justifyContent: 'center' }}>

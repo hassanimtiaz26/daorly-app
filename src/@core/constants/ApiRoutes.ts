@@ -56,6 +56,7 @@ export const ApiRoutes: any = {
     index: 'user',
     update: 'user',
     wallet: 'user/wallet',
+    changePassword: 'user/password',
   },
   page: {
     name: (name: string) => `pages/${name}`,

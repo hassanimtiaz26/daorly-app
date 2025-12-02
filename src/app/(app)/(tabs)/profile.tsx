@@ -103,6 +103,7 @@ export default function ProfileScreen() {
 
       {activeTab === 'profile' && (
         <EditProfile
+          showReadonly={true}
           isEdit={true}
           onSave={onProfileSaved}
           buttonText={t('general.save')}

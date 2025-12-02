@@ -1,127 +1,138 @@
 {
   "general": {
-    "hello": "Hello",
-    "welcome": "اهلا بك في دورلي",
-    "phoneNumber": "رقم الجوال",
-    "password": "كلمة السر",
-    "confirmPassword": "Confirm Password",
+    "hello": "مرحباً",
+    "welcome": "مرحباً بك في دورلي!",
+    "phoneNumber": "رقم الهاتف",
+    "password": "كلمة المرور",
+    "confirmPassword": "تأكيد كلمة المرور",
     "continue": "متابعة",
-    "continueAsBusiness": "Continue as a Business Provider",
-    "logout": "Logout",
-    "signUp": "انشاء حساب جديد",
-    "signIn": "Sign In",
-    "resendCode": "Resend Code",
-    "firstName": "First Name",
-    "lastName": "Last Name",
+    "continueAsBusiness": "متابعة كمقدم خدمة",
+    "logout": "تسجيل خروج",
+    "signUp": "إنشاء حساب",
+    "signIn": "تسجيل دخول",
+    "resendCode": "إعادة إرسال الرمز",
+    "firstName": "الاسم الأول",
+    "lastName": "اسم العائلة",
     "syria": "سوريا",
-    "country": "Country",
-    "city": "City",
-    "area": "Area",
-    "address": "Address",
-    "services": "Services",
-    "viewAll": "View All",
-    "save": "Save",
-    "dismiss": "Dismiss",
-    "description": "Description",
-    "confirm": "Confirm",
-    "register": "Register",
-    "availableAreas": "Available Areas",
-    "businessName": "Business Name",
-    "accept": "Accept",
-    "reject": "Reject",
-    "price": "Price",
-    "back": "Back",
-    "close": "Close",
-    "newOrders": "New Orders",
-    "balance": "Balance",
-    "transactions": "Transactions"
+    "country": "الدولة",
+    "city": "المدينة",
+    "area": "المنطقة",
+    "address": "العنوان",
+    "services": "الخدمات",
+    "viewAll": "عرض الكل",
+    "save": "حفظ",
+    "dismiss": "إلغاء",
+    "description": "الوصف",
+    "confirm": "تأكيد",
+    "register": "تسجيل",
+    "availableAreas": "المناطق المتاحة",
+    "businessName": "اسم النشاط التجاري",
+    "accept": "قبول",
+    "reject": "رفض",
+    "price": "السعر",
+    "back": "رجوع",
+    "close": "إغلاق",
+    "newOrders": "الطلبات الجديدة",
+    "balance": "الرصيد",
+    "transactions": "المعاملات",
+    "edit": "يحرر",
+    "currentPassword": "Current Password",
+    "changePassword": "Change Password"
   },
   "errors": {
     "date": {
-      "required": "Date is required"
+      "required": "التاريخ مطلوب"
     },
     "description": {
-      "required": "Description is required"
+      "required": "الوصف مطلوب"
     },
     "password": {
-      "required": "Password is required",
-      "minLength": "Password must be at least 8 characters",
-      "notMatch": "Passwords do not match"
+      "required": "كلمة المرور مطلوبة",
+      "minLength": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
+      "notMatch": "كلمتا المرور غير متطابقتين"
     },
     "phone": {
-      "required": "Phone number is required",
-      "invalid": "Invalid Phone Number"
+      "required": "رقم الهاتف مطلوب",
+      "invalid": "رقم هاتف غير صالح"
     },
     "photos": {
-      "required": "At least one photo is required"
+      "required": "الصورة مطلوبة على الأقل"
     },
-    "minLength": "Minimum length is {{length}} characters"
+    "minLength": "الحد الأدنى للطول هو {{length}} أحرف"
   },
   "auth": {
     "login": {
-      "haveAccount": "ليس يديك حساب ؟",
-      "otpTitle": "Account Confirmation"
+      "haveAccount": "ليس لديك حساب؟",
+      "otpTitle": "تأكيد الحساب"
     },
     "register": {
-      "title": "Create Account",
-      "haveAccount": "Already have an account?"
+      "title": "إنشاء حساب",
+      "haveAccount": "هل لديك حساب بالفعل؟"
     },
     "otp": {
-      "title": "Enter confirmation code",
-      "message": "A 4-digit code was sent to your phone number"
+      "title": "أدخل رمز التأكيد",
+      "message": "تم إرسال رمز مكوّن من 4 أرقام إلى رقم هاتفك"
     },
     "profile": {
-      "title": "Personal Information"
+      "title": "المعلومات الشخصية"
     },
     "business": {
-      "title": "Business Information"
+      "title": "معلومات النشاط التجاري"
     }
   },
   "order": {
-    "subTitle": "Please fill the details below to complete the order..",
+    "subTitle": "يرجى ملء التفاصيل أدناه لإكمال الطلب..",
     "form": {
-      "description": "Add description for the service that you need...",
-      "date": "Select the date",
-      "photos": "Add photos for your problem",
-      "discount": "Add code for discount",
-      "existingProfile": "Use same profile address and contact details"
+      "description": "أضف وصفًا للخدمة التي تحتاجها...",
+      "date": "اختر التاريخ",
+      "photos": "أضف صورًا للمشكلة",
+      "discount": "أضف رمز الخصم",
+      "existingProfile": "استخدام نفس عنوان وبيانات الاتصال الموجودة في الملف الشخصي"
     },
     "canceled": {
-      "you": "Canceled by You",
-      "client": "Canceled by Client",
-      "provider": "Canceled by Provider"
+      "you": "تم الإلغاء من قبلك",
+      "client": "تم الإلغاء من قبل العميل",
+      "provider": "تم الإلغاء من قبل مقدم الخدمة"
     },
     "offer": {
-      "accept": "Accept Offer",
-      "edit": "Edit your Offer",
-      "acceptPrompt": "Are you sure you want to accept the order?",
-      "fillDetails": "Please fill the details below to complete the order..",
+      "accept": "قبول العرض",
+      "edit": "تعديل العرض",
+      "acceptPrompt": "هل أنت متأكد أنك تريد قبول الطلب؟",
+      "fillDetails": "يرجى ملء التفاصيل أدناه لإكمال الطلب..",
       "form": {
-        "message": "Add your notes to be displayed on your offer...",
-        "price": "Add your price (AVG)",
-        "phoneNumber": "Add alternative contacting number"
+        "message": "أضف ملاحظاتك التي ستظهر في عرضك...",
+        "price": "أضف السعر (تقريبياً)",
+        "phoneNumber": "أضف رقم تواصل بديل"
       }
     },
     "accept": {
-      "title": "Accept Order",
-      "message": "Are you sure you want to accept the order?"
+      "title": "قبول الطلب",
+      "message": "هل أنت متأكد أنك تريد قبول هذا الطلب؟"
     },
     "cancel": {
-      "title": "Cancel Order",
-      "message": "Are you sure you want to cancel the order?",
+      "title": "إلغاء الطلب",
+      "message": "هل أنت متأكد أنك تريد إلغاء الطلب؟",
       "reason": {
-        "label": "Cancellation Reason",
-        "placeholder": "Please add the reason for order cancellation...",
-        "required": "Order cancellation reason is required"
+        "label": "سبب الإلغاء",
+        "placeholder": "يرجى إضافة سبب إلغاء الطلب...",
+        "required": "سبب إلغاء الطلب مطلوب"
       }
     },
     "complete": {
-      "title": "Complete Order",
-      "message": "Are you sure you want to complete the order?"
+      "title": "إكمال الطلب",
+      "message": "هل أنت متأكد أنك تريد إكمال الطلب؟"
     },
     "reject": {
-      "title": "Reject Order",
-      "message": "Are you sure you want to reject this order?"
+      "title": "رفض الطلب",
+      "message": "هل أنت متأكد أنك تريد رفض هذا الطلب؟"
+    }
+  },
+  "subscription": {
+    "title": "اختر الخطة المناسبة لنشاطك التجاري",
+    "subtitle": "أسعار اشتراك تناسب الشركات في كل مراحل النمو",
+    "dialog": {
+      "title": "الاشتراك",
+      "message": "هل أنت متأكد أنك تريد الاشتراك في هذه الخطة؟"
     }
   }
 }

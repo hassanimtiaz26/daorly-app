@@ -3,7 +3,7 @@ import { useAppTheme } from '@core/hooks/useAppTheme';
 import { z } from 'zod';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { syrianPhoneNumberRegex } from '@core/utils/helpers.util';
+import { stripCountryCode, syrianPhoneNumberRegex } from '@core/utils/helpers.util';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { TOrder, TOrderOffer } from '@core/types/order.type';
 import { FC, useEffect } from 'react';
@@ -17,6 +17,7 @@ import { useBottomSheet } from '@core/hooks/useBottomSheet';
 import { ApiRoutes } from '@core/constants/ApiRoutes';
 import { useDialog } from '@core/hooks/useDialog';
 import ThemedButton from '@components/ui/buttons/ThemedButton';
+import { useAuth } from '@core/hooks/useAuth';
 
 type Props = {
   order: TOrder;
@@ -42,6 +43,7 @@ const OrderAcceptContent: FC<Props> = ({ order, offer, onAcceptOrder }) => {
   const { post, error, loading } = useFetch();
   const { close } = useBottomSheet();
   const { showDialog } = useDialog();
+  const { user } = useAuth();
 
   const formSchema = z.object({
     phoneNumber: z.string().trim().regex(syrianPhoneNumberRegex, t('errors.phone.invalid')),
@@ -58,12 +60,15 @@ const OrderAcceptContent: FC<Props> = ({ order, offer, onAcceptOrder }) => {
     reset,
   } = useForm<FormType>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      phoneNumber: user.phoneNumber,
+    }
   });
 
   useEffect(() => {
     if (offer) {
       reset({
-        phoneNumber: offer.phoneNumber,
+        phoneNumber: stripCountryCode(offer.phoneNumber),
         price: offer.price.toString(),
         message: offer.message
       })
@@ -86,15 +91,24 @@ const OrderAcceptContent: FC<Props> = ({ order, offer, onAcceptOrder }) => {
   const onSubmit = (data: FormType)=> {
     if (!isValid) return;
 
-    post(ApiRoutes.orders.makeOffer(order.id), data)
-      .subscribe({
-        next: (response) => {
-          if (response.success) {
-            onAcceptOrder(response);
-            close();
-          }
-        }
-      });
+    const number = '+963' + stripCountryCode(data.phoneNumber);
+
+    const formData = {
+      ...data,
+      phoneNumber: number,
+    }
+
+    console.log(JSON.stringify(formData, null, 2));
+
+    // post(ApiRoutes.orders.makeOffer(order.id), formData)
+    //   .subscribe({
+    //     next: (response) => {
+    //       if (response && response.success) {
+    //         onAcceptOrder(response);
+    //         close();
+    //       }
+    //     }
+    //   });
   }
 
   return (
@@ -171,6 +185,7 @@ const OrderAcceptContent: FC<Props> = ({ order, offer, onAcceptOrder }) => {
                 onChange(e);
                 handleTextChange('phoneNumber');
               }}
+              left={<TextInput.Affix text={'+963'} />}
               right={
                 <TextInput.Icon
                   icon={({ color, size }) => <MaterialIcon color={color} size={size} name={'phone'} />} />

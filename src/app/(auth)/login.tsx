@@ -19,7 +19,7 @@ import { useFetch } from '@core/hooks/useFetch';
 import * as Device from 'expo-device';
 import { Config } from '@core/constants/Config';
 import OtpVerifyScreen from '@components/ui/screens/OtpVerify';
-import { syrianPhoneNumberRegex } from '@core/utils/helpers.util';
+import { stripCountryCode, syrianPhoneNumberRegex } from '@core/utils/helpers.util';
 import { useFirebase } from '@core/hooks/useFirebase';
 import { useAuth } from '@core/hooks/useAuth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -144,7 +144,7 @@ export default function LoginScreen() {
   const onSubmit = useCallback((data: LoginFormType) => {
     if (!isValid) return;
 
-    const number = '+963' + data.phoneNumber.replace(/^0/, '');
+    const number = '+963' + stripCountryCode(data.phoneNumber);
     setPhoneNumber(number);
 
     const formData: TLoginParams = {

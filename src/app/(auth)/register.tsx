@@ -10,7 +10,7 @@ import { Link, useRouter } from 'expo-router';
 import SyriaFlag from '@/assets/icons/syria.svg';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
-import { syrianPhoneNumberRegex } from '@core/utils/helpers.util';
+import { stripCountryCode, syrianPhoneNumberRegex } from '@core/utils/helpers.util';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import ThemedInputPassword from '@components/ui/inputs/ThemedInputPassword';
@@ -130,7 +130,7 @@ export default function RegisterScreen() {
   const onSubmit = useCallback((data: RegisterFormType) => {
     if (!isValid) return;
 
-    const number = '+963' + data.phoneNumber.replace(/^0/, '');
+    const number = '+963' + stripCountryCode(data.phoneNumber);
     setPhoneNumber(number);
 
     const formData: TRegisterParams = {
