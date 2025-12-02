@@ -24,9 +24,10 @@
       },
       "edgeToEdgeEnabled": true,
       "package": "com.sourcecode.daorly",
-      "versionCode": 1,
+      "versionCode": 7,
       "permissions": [
-        "android.permission.POST_NOTIFICATIONS"
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.READ_MEDIA_IMAGES"
       ]
     },
     "plugins": [
@@ -65,10 +66,17 @@
         }
       ],
       [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos."
+        }
+      ],
+      [
         "react-native-permissions",
         {
           "iosPermissions": [
-            "NOTIFICATIONS"
+            "Notifications",
+            "PhotoLibraryUsage"
           ]
         }
       ],

@@ -21,6 +21,9 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import GlobalBottomSheet from '@components/bottom-sheet/GlobalBottomSheet';
 import GlobalDialog from '@components/dialog/GlobalDialog';
+import { ApiRoutes } from '@core/constants/ApiRoutes';
+import GlobalSnackbar from '@components/snackbar/GlobalSnackbar';
+import ThemedDrawer from '@components/drawer/Drawer';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -52,7 +55,7 @@ export default function RootLayout() {
     //   setIsLoading(false);
     // }, 3000)
     // console.log('isLoading', isLoading);
-    get('auth/get-profile').subscribe({
+    get(ApiRoutes.auth.user).subscribe({
       next: (response) => {
         console.log('getProfile', response);
         if (response && 'data' in response) {
@@ -120,7 +123,9 @@ export default function RootLayout() {
                 <Stack.Screen name="+not-found" />
               </Stack>
               <GlobalBottomSheet />
+              <GlobalSnackbar />
               <GlobalDialog />
+              <ThemedDrawer />
             </ShimmerProvider>
           </BottomSheetModalProvider>
         </PaperProvider>

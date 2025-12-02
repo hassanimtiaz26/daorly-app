@@ -3,16 +3,18 @@ import { useFetch } from '@core/hooks/useFetch';
 import { firstValueFrom, Observable, switchMap } from 'rxjs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Config } from '@core/constants/Config';
+import { ApiRoutes } from '@core/constants/ApiRoutes';
+import { TUser } from '@core/types/user.type';
 
 type AuthState = {
   isLoading: boolean;
   setIsLoading: (isLoading: boolean) => void;
   isAuthenticated: boolean;
-  user: any;
+  user: TUser;
   authenticate: () => Observable<any>;
   login: (user: any) => void;
   logout: () => void;
-  setUser: (user: any) => void;
+  setUser: (user: TUser) => void;
 }
 
 export const useAuth = create<AuthState>((set) => ({
@@ -22,7 +24,7 @@ export const useAuth = create<AuthState>((set) => ({
   authenticate: () => {
     const { get } = useFetch();
 
-    return get('auth/get-profile').pipe(
+    return get(ApiRoutes.user.index).pipe(
       switchMap((user) => {
         set({ isAuthenticated: true, user });
         return user;
@@ -36,6 +38,6 @@ export const useAuth = create<AuthState>((set) => ({
         set({ isAuthenticated: false, user: null });
       });
   },
-  setUser: (user: any) => set((state) => ({ user: { ...state.user, ...user } })),
+  setUser: (user: TUser) => set((state) => ({ user })),
   setIsLoading: (isLoading: boolean) => set({ isLoading }),
 }));

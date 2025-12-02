@@ -5,16 +5,21 @@ export type TCity = {
 
 export type TArea = {
   id: number;
+  cityId: number;
   name: string;
+  city?: TCity;
 }
 
 export type TMainSlider = {
   id: number;
   order: number;
-  is_active: boolean;
+  isActive: boolean;
   image: string;
-  published_at: {
-    human: string;
-    date: string;
-  };
+}
+
+export type TSelectValues = {
+  value: string;
+  list: Array<{ _id: string; value: string }>;
+  selectedList: Array<{ _id: string; value: string }>;
+  error: string;
 }

@@ -18,6 +18,7 @@ import ThemedHeader from '@components/ui/elements/ThemedHeader';
 import ServicesScreenShimmer from '@components/shimmers/ServicesScreenShimmer';
 import { useBottomSheet } from '@core/hooks/useBottomSheet';
 import ServiceDetail from '@components/services/ServiceDetail';
+import { ApiRoutes } from '@core/constants/ApiRoutes';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -46,6 +47,7 @@ type ServiceScreenParams = {
   subCategory?: string;
   type?: 'services' | 'categories';
   searchQuery?: string;
+  parentId?: any;
 }
 
 const ServicesScreen = () => {
@@ -55,7 +57,7 @@ const ServicesScreen = () => {
   const { push } = useRouter();
 
   const { get, loading } = useFetch();
-  const { subCategory, type, searchQuery } = useLocalSearchParams<ServiceScreenParams>();
+  const { subCategory, type, searchQuery, parentId } = useLocalSearchParams<ServiceScreenParams>();
   const [autoFocus, setAutoFocus] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [items, setItems] = useState<Array<TCategory | TService>>([]);
@@ -76,17 +78,17 @@ const ServicesScreen = () => {
   }, [subCategory, type]);
 
   const fetchServices = useCallback(() => {
-    let url = 'client/home/services';
+    let url = ApiRoutes.services.index;
     if (searchQuery) {
-      url += `?search_value=${encodeURIComponent(searchQuery)}`;
+      url += `?searchValue=${encodeURIComponent(searchQuery)}`;
     } else if (subCategory) {
-      url += `?sub_category_id=${subCategory}`;
+      url += `?categoryId=${subCategory}`;
     }
 
     get(url).subscribe({
         next: (response) => {
           if (response && 'data' in response) {
-            setItems(response.data as TService[]);
+            setItems(response.data.services as TService[]);
           }
         },
         complete: () => {
@@ -96,13 +98,17 @@ const ServicesScreen = () => {
   }, [get, setItems, setRefreshing]);
 
   const fetchCategories = useCallback(() => {
-    get('client/home').subscribe({
+    let url = ApiRoutes.categories.subCategories;
+
+    if (parentId) {
+      url += `?parentId=${parentId}`;
+    }
+
+    get(url).subscribe({
       next: (response) => {
         if (response && 'data' in response) {
           const data = response.data;
-          if ('sub_categories' in data) {
-            setItems(data.sub_categories as TCategory[]);
-          }
+          setItems(data.subCategories as TCategory[]);
         }
       },
       complete: () => {
@@ -154,10 +160,8 @@ const ServicesScreen = () => {
           {items.map((item, index) => {
             let sourceImage = null;
 
-            if ('images' in item && item.images.length > 0) {
-              sourceImage = { uri: item.images[0] };
-            } else if ('image' in item && item.image) {
-              sourceImage = { uri: item.image };
+            if ('image' in item && item.image) {
+              sourceImage = { uri: item.image.media.url };
             } else {
               sourceImage = require('@/assets/images/placeholder.png');
             }

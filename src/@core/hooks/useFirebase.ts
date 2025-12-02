@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import messaging from '@react-native-firebase/messaging';
+import { getApp } from '@react-native-firebase/app';
+import { requestPermission, getToken } from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Config } from '@core/constants/Config';
 
@@ -13,8 +14,9 @@ export const useFirebase = () => {
           setFirebaseToken(token);
         } else {
           try {
-            await messaging().requestPermission()
-            const fcmToken = await messaging().getToken();
+            const firebaseApp = getApp();
+            await requestPermission(firebaseApp.messaging())
+            const fcmToken = await getToken(firebaseApp.messaging());
             await AsyncStorage.setItem(Config.firebaseTokenStoreKey, fcmToken);
             setFirebaseToken(fcmToken);
           } catch (e) {

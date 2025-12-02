@@ -8,20 +8,20 @@ import { FC, useCallback, useEffect, useState } from 'react';
 import { ViewProps } from 'react-native/Libraries/Components/View/ViewPropTypes';
 import ThemedButton from '@components/ui/buttons/ThemedButton';
 import { z } from 'zod';
-import { syrianPhoneNumberRegex } from '@core/utils/helpers.util';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useFetch } from '@core/hooks/useFetch';
 import ThemedSelect from '@components/ui/inputs/ThemedSelect';
 import ThemedInputError from '@components/ui/inputs/ThemedInputError';
 import { useAuth } from '@core/hooks/useAuth';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Config } from '@core/constants/Config';
+import { ApiRoutes } from '@core/constants/ApiRoutes';
+import { TCity, TSelectValues } from '@core/types/general.type';
 
 type Props = ViewProps & {
   buttonText?: string;
   onSave: () => void;
-  fetchProfile?: boolean;
+  isEdit?: boolean;
+  showReadonly?: boolean;
 };
 
 const styles = StyleSheet.create({
@@ -31,14 +31,7 @@ const styles = StyleSheet.create({
   }
 });
 
-type TSelectValues = {
-  value: string;
-  list: Array<{ _id: string; value: string }>;
-  selectedList: Array<{ _id: string; value: string }>;
-  error: string;
-}
-
-const EditProfile: FC<Props> = ({ buttonText, onSave, fetchProfile, ...props }) => {
+const EditProfile: FC<Props> = ({ buttonText, onSave, showReadonly = false, isEdit, ...props }) => {
   const { t } = useTranslation();
   const { get, post, loading } = useFetch();
   const { user } = useAuth();
@@ -76,44 +69,95 @@ const EditProfile: FC<Props> = ({ buttonText, onSave, fetchProfile, ...props }) 
   });
   const [areaDisabled, setAreaDisabled] = useState(true);
 
+  const [isReadonly, setIsReadonly] = useState(showReadonly);
+
+  useEffect(() => {
+    console.log(isReadonly);
+  }, []);
+
   useEffect(() => {
     console.log('register area');
     register('area');
   }, [register]);
 
   useEffect(() => {
-    if (user && fetchProfile) {
+    if (user && isEdit) {
       reset({
-        firstName: user.f_name,
-        lastName: user.l_name,
-        area: user.area.id || '',
-        address: user.address || '',
+        firstName: user.profile.firstName,
+        lastName: user.profile.lastName,
+        area: user.profile.areaId || '',
+        address: user.profile.address || '',
       });
     }
-  }, [user, reset, fetchProfile]);
+  }, [user, reset, isEdit]);
 
   useEffect(() => {
-    get('cities')
-      .subscribe({
-        next: (response) => {
-          console.log(response.data);
-          if ('data' in response) {
-            setCities({
-              value: '',
-              list: response.data.map((item: any) => ({
-                _id: item.id,
-                value: item.name,
-              })),
-              selectedList: [],
-              error: '',
-            });
-          }
-        },
-        error: (error) => {
-          console.error('Error fetching cities:', error);
-        },
-      })
+    getCities();
   }, []);
+
+  const getCities = useCallback(() => {
+    get(ApiRoutes.location.cities).subscribe({
+      next: (response) => {
+        if (!response.data) return;
+
+        const citiesData: TCity[] = response.data.cities;
+        const mappedCities = citiesData.map((item) => ({
+          _id: item.id.toString(),
+          value: item.name,
+        }));
+
+        setCities({
+          value: '',
+          list: mappedCities,
+          selectedList: [],
+          error: '',
+        });
+
+        if (user && isEdit) {
+          const userArea = user?.profile?.area;
+          const userCityId = userArea?.cityId;
+
+          if (userArea && userCityId) {
+            const selectedCity = mappedCities.find(c => c._id === userCityId.toString());
+
+            if (selectedCity) {
+              setCities(prev => ({
+                ...prev,
+                value: selectedCity.value,
+                selectedList: [selectedCity],
+              }));
+
+              get(ApiRoutes.location.areas(selectedCity._id)).subscribe({
+                next: (areaResponse) => {
+                  if (!areaResponse.data) return;
+
+                  const areasData = areaResponse.data.areas;
+                  const mappedAreas = areasData.map((item: any) => ({
+                    _id: item.id.toString(),
+                    value: item.name,
+                  }));
+                  const selectedArea = mappedAreas.find(a => a._id === userArea.id.toString());
+
+                  if (selectedArea) {
+                    setAreas({
+                      value: selectedArea ? selectedArea.value : '',
+                      list: mappedAreas,
+                      selectedList: [selectedArea],
+                      error: '',
+                    });
+                    setValue('area', selectedArea._id);
+                  }
+                  setAreaDisabled(false);
+                },
+                error: (error) => console.error('Error fetching areas for pre-population:', error),
+              });
+            }
+          }
+        }
+      },
+      error: (error) => console.error('Error fetching cities:', error),
+    });
+  }, [get, isEdit, user, setAreas, setCities, setValue]);
 
   const handleTextChange = useCallback((inputControl: any) => {
     trigger(inputControl).then();
@@ -122,6 +166,7 @@ const EditProfile: FC<Props> = ({ buttonText, onSave, fetchProfile, ...props }) 
   const onCityChange = useCallback((value: any) => {
     console.log(value);
     setAreaDisabled(true);
+
     setCities({
       ...cities,
       value: value.text,
@@ -131,19 +176,21 @@ const EditProfile: FC<Props> = ({ buttonText, onSave, fetchProfile, ...props }) 
     const selectedCity = value.selectedList[0];
 
     if (selectedCity) {
-      get(`cities/areas/${selectedCity._id}`)
+      get(ApiRoutes.location.areas(selectedCity._id))
         .subscribe({
           next: (response) => {
             if ('data' in response) {
+              const data = response.data.areas;
               setAreas({
                 value: '',
-                list: response.data.map((item: any) => ({
+                list: data.map((item: any) => ({
                   _id: item.id,
                   value: item.name,
                 })),
                 selectedList: [],
                 error: '',
               });
+              setValue('area', '', { shouldValidate: true });
               setAreaDisabled(false);
             }
           },
@@ -157,7 +204,7 @@ const EditProfile: FC<Props> = ({ buttonText, onSave, fetchProfile, ...props }) 
   const onAreaChange = useCallback((value: any) => {
     console.log(value);
     setAreas({
-      ...cities,
+      ...areas,
       value: value.text,
       selectedList: value.selectedList,
     });
@@ -183,13 +230,13 @@ const EditProfile: FC<Props> = ({ buttonText, onSave, fetchProfile, ...props }) 
     // if (!isValid) return;
     console.log(data);
     const formData = {
-      f_name: data.firstName,
-      l_name: data.lastName,
-      area_id: data.area,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      areaId: data.area,
       address: data.address,
     };
 
-    post('auth/add-personal-info', formData)
+    post(ApiRoutes.user.update, formData)
       .subscribe({
         next: async (response) => {
           onSave();
@@ -212,6 +259,7 @@ const EditProfile: FC<Props> = ({ buttonText, onSave, fetchProfile, ...props }) 
                    }) => (
             <View>
               <ThemedTextInput
+                readOnly={isReadonly}
                 disabled={loading}
                 onBlur={onBlur}
                 onChangeText={(e) => {
@@ -242,6 +290,7 @@ const EditProfile: FC<Props> = ({ buttonText, onSave, fetchProfile, ...props }) 
                    }) => (
             <View>
               <ThemedTextInput
+                readOnly={isReadonly}
                 disabled={loading}
                 onBlur={onBlur}
                 onChangeText={(e) => {
@@ -281,7 +330,7 @@ const EditProfile: FC<Props> = ({ buttonText, onSave, fetchProfile, ...props }) 
           />} />
 
         <ThemedSelect
-          disabled={loading}
+          disabled={loading || isReadonly}
           label={t('general.city')}
           arrayList={cities.list}
           selectedArrayList={cities.selectedList}
@@ -290,7 +339,7 @@ const EditProfile: FC<Props> = ({ buttonText, onSave, fetchProfile, ...props }) 
           onSelection={onCityChange} />
 
         <ThemedSelect
-          disabled={areaDisabled || loading}
+          disabled={areaDisabled || loading || isReadonly}
           label={t('general.area')}
           arrayList={areas.list}
           selectedArrayList={areas.selectedList}
@@ -307,6 +356,7 @@ const EditProfile: FC<Props> = ({ buttonText, onSave, fetchProfile, ...props }) 
                    }) => (
             <View>
               <ThemedTextInput
+                readOnly={isReadonly}
                 disabled={loading}
                 onBlur={onBlur}
                 onChangeText={(e) => {
@@ -330,11 +380,17 @@ const EditProfile: FC<Props> = ({ buttonText, onSave, fetchProfile, ...props }) 
 
       </View>
 
-      <ThemedButton
-        disabled={!isValid || loading}
-        loading={loading}
-        onPress={handleSubmit(onSubmit)}
-        buttonStyle={'secondary'}>{buttonText || t('general.continue')}</ThemedButton>
+      {isReadonly ? (
+        <ThemedButton
+          onPress={() => setIsReadonly(!isReadonly)}
+          buttonStyle={'secondary'}>{t('general.edit')}</ThemedButton>
+        ) : (
+        <ThemedButton
+          disabled={!isValid || loading}
+          loading={loading}
+          onPress={handleSubmit(onSubmit)}
+          buttonStyle={'secondary'}>{buttonText || t('general.continue')}</ThemedButton>
+      )}
     </View>
   );
 }

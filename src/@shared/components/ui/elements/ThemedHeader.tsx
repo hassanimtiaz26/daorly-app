@@ -14,7 +14,9 @@ const createStyles = (colors: MD3Colors) => StyleSheet.create({
   },
 })
 
-const ThemedHeader: FC<ViewProps & PropsWithChildren> = ({ style, children, ...props }) => {
+type Props = ViewProps & PropsWithChildren;
+
+const ThemedHeader: FC<Props> = ({ style, children, ...props }) => {
   const { colors } = useAppTheme();
   const styles = createStyles(colors);
 

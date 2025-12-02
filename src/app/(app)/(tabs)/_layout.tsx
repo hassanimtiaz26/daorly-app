@@ -26,14 +26,19 @@ export default function TabLayout() {
         tabBarStyle: {
           // position: 'absolute',
           // bottom: 10,
+          height: 70,
           backgroundColor: colors.secondary,
           paddingBottom: 0,
           paddingHorizontal: 44,
           marginBottom: 0,
         },
+        tabBarItemStyle: {
+          alignItems: 'center',
+          justifyContent: 'center',
+        },
         tabBarIconStyle: {
-          marginTop: 12,
-        }
+          flex: 1,
+        },
       }}>
       <Tabs.Screen
         name="home"

@@ -6,6 +6,7 @@ import { useAppTheme } from '@core/hooks/useAppTheme';
 import { MD3Colors } from 'react-native-paper/lib/typescript/types';
 import { TextInput } from 'react-native-paper';
 import Feather from '@expo/vector-icons/Feather';
+import { Config } from '@core/constants/Config';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -15,7 +16,7 @@ const createStyles = (colors: MD3Colors) => StyleSheet.create({
   },
   select: {
     width: '100%',
-    height: 64,
+    height: Config.inputHeight,
     borderColor: colors.outline,
     margin: 0,
   },

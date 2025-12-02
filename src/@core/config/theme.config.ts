@@ -9,8 +9,10 @@ export const BaseTheme: ThemeConfig = {
     // Primary color: #4174BA
     primary: 'rgb(15, 179, 167)',
     onPrimary: 'rgb(255, 255, 255)',
-    primaryContainer: 'rgb(112, 247, 233)',
-    onPrimaryContainer: 'rgb(0, 32, 29)',
+    // primaryContainer: 'rgb(112, 247, 233)',
+    // onPrimaryContainer: 'rgb(0, 32, 29)',
+    primaryContainer: 'rgb(204, 251, 241)',
+    onPrimaryContainer: 'rgb(19, 78, 74)',
     // secondary: 'rgb(15, 179, 167)',
     // onSecondary: 'rgb(255, 255, 255)',
     // secondaryContainer: 'rgb(112, 247, 233)',
@@ -40,9 +42,9 @@ export const BaseTheme: ThemeConfig = {
 
     // Background and surface colors
     background: 'rgb(245, 247, 249)',
-    onBackground: 'rgb(27, 27, 30)',
+    onBackground: 'rgb(21, 21, 59)',
     surface: 'rgb(255, 255, 255)',
-    onSurface: 'rgb(27, 27, 30)',
+    onSurface: 'rgb(21, 21, 59)',
     surfaceVariant: 'rgb(225, 227, 232)',
     onSurfaceVariant: 'rgb(68, 71, 75)',
 

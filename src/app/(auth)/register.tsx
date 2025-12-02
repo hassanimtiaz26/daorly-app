@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Text, TextInput } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MD3Colors } from 'react-native-paper/lib/typescript/types';
@@ -10,7 +10,7 @@ import { Link, useRouter } from 'expo-router';
 import SyriaFlag from '@/assets/icons/syria.svg';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
-import { syrianPhoneNumberRegex } from '@core/utils/helpers.util';
+import { stripCountryCode, syrianPhoneNumberRegex } from '@core/utils/helpers.util';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import ThemedInputPassword from '@components/ui/inputs/ThemedInputPassword';
@@ -18,12 +18,14 @@ import OtpVerifyScreen from '@components/ui/screens/OtpVerify';
 import { useCallback, useEffect, useState } from 'react';
 import ThemedInputError from '@components/ui/inputs/ThemedInputError';
 import { useFetch } from '@core/hooks/useFetch';
-import * as Device from 'expo-device';
 import { Config } from '@core/constants/Config';
 import { useAuth } from '@core/hooks/useAuth';
 import { useFirebase } from '@core/hooks/useFirebase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDialog } from '@core/hooks/useDialog';
+import { ApiRoutes } from '@core/constants/ApiRoutes';
+import { TRegisterParams } from '@core/types/auth.type';
+import MaterialIcon from '@expo/vector-icons/MaterialIcons';
 
 const createStyles = (colors: MD3Colors) => StyleSheet.create({
   container: {
@@ -78,25 +80,39 @@ export default function RegisterScreen() {
   const { firebaseToken } = useFirebase();
 
   const registerSchema = z.object({
-    phoneNumber: z.string().trim().regex(syrianPhoneNumberRegex, t('errors.auth.invalidPhoneNumber')),
-    password: z.string().trim().min(8, t('errors.auth.passwordMinLength')),
+    phoneNumber: z.string().trim().regex(syrianPhoneNumberRegex, t('errors.phone.invalid')),
+    password: z.string().trim().min(8, t('errors.password.minLength')),
     confirmPassword: z.string().trim(),
+    role: z.string().trim(),
   }).refine((data) => data.password === data.confirmPassword, {
-    message: t('errors.auth.passwordsDoNotMatch'),
+    message: t('errors.password.notMatch'),
     path: ['confirmPassword'],
   })
   type RegisterFormType = z.infer<typeof registerSchema>;
   const {
+    register,
     control,
     handleSubmit,
     formState: { errors, isValid },
     trigger,
+    setValue,
   } = useForm<RegisterFormType>({
     resolver: zodResolver(registerSchema),
+    defaultValues: {
+      phoneNumber: '',
+      password: '',
+      confirmPassword: '',
+      role: 'client',
+    },
   });
 
   const { login } = useAuth();
   const { showDialog } = useDialog();
+  const [role, setRole] = useState<string>('client');
+
+  useEffect(() => {
+    register('role');
+  }, [register]);
 
   useEffect(() => {
     if (error) {
@@ -114,44 +130,42 @@ export default function RegisterScreen() {
   const onSubmit = useCallback((data: RegisterFormType) => {
     if (!isValid) return;
 
-    const number = '+963' + data.phoneNumber.replace(/^0/, '');
+    const number = '+963' + stripCountryCode(data.phoneNumber);
     setPhoneNumber(number);
 
-    const formData = {
-      mobile: number,
+    const formData: TRegisterParams = {
+      phoneNumber: number,
       password: data.password,
-      as_provider: false,
-      device_token: firebaseToken, // Firebase token
-      operating_system: Device.osName,
-      version: Device.osVersion,
-      brand: Device.brand,
-      type: Device.deviceType?.toString(),
-      model: Device.modelName,
-      app_version: Config.appVersion,
-    }
+      isProvider: data.role === 'provider',
+      firebaseToken: firebaseToken, // Firebase token
+    };
 
     console.log(JSON.stringify(formData, null, 2));
 
-    post('auth/register', formData)
+    post(ApiRoutes.auth.register, formData)
       .subscribe({
         next: (response) => {
           console.log('Register Response', response);
-          if (response && 'data' in response) {
+          if (response && response.success) {
             setShowOtpScreen(true);
-            setUser(response.data.user);
           }
+          // if (response && 'data' in response) {
+          //   setShowOtpScreen(true);
+          //   setUser(response.data.user);
+          // }
         }
       });
   }, [isValid, post, firebaseToken]);
 
   const onOtpSubmit = useCallback((otp: string) => {
     const formData = {
-      mobile: phoneNumber,
+      phoneNumber: phoneNumber,
       code: otp,
-      device_token: firebaseToken,
-      type: 'account_confirmation'
-    }
-    post('auth/confirm-code', formData)
+      // firebaseToken,
+      type: 'confirmation'
+    };
+
+    post(ApiRoutes.auth.confirmCode, formData)
       .subscribe({
         next: async (response) => {
           if (response && 'data' in response) {
@@ -166,6 +180,18 @@ export default function RegisterScreen() {
         }
       })
   }, [navigate, post, phoneNumber, firebaseToken]);
+
+  const onRoleChange = (data: string) => {
+    if (role === data) return;
+
+    setRole(data);
+
+    setValue('role', data, {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true,
+    });
+  }
 
   if (showOtpScreen) {
     return <OtpVerifyScreen
@@ -195,7 +221,7 @@ export default function RegisterScreen() {
                        }) => (
                 <View>
                   <ThemedTextInput
-                    keyboardType={'numeric'}
+                    keyboardType={'number-pad'}
                     disabled={loading}
                     onBlur={onBlur}
                     onChangeText={(e) => {
@@ -265,6 +291,51 @@ export default function RegisterScreen() {
                   )}
                 </View>
               )} />
+
+
+            <View style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 16,
+            }}>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() => onRoleChange('client')}
+                style={{
+                  padding: 12,
+                  borderRadius: 8,
+                  borderColor: colors.secondary,
+                  borderWidth: 2,
+                  backgroundColor: role === 'client' ? colors.secondary : colors.surface,
+                  flex: 1,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 10,
+                }}>
+                <MaterialIcon name={'person-outline'} size={100} color={role === 'client' ? colors.onSecondary : colors.secondary} />
+
+                <Text style={{ color: role === 'client' ? colors.onSecondary : colors.secondary }} variant={'titleMedium'}>User</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() => onRoleChange('provider')}
+                style={{
+                  padding: 12,
+                  borderRadius: 8,
+                  borderColor: colors.primary,
+                  borderWidth: 2,
+                  backgroundColor: role === 'provider' ? colors.primary : colors.surface,
+                  flex: 1,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 10,
+                }}>
+                <MaterialIcon name={'engineering'} size={100} color={role === 'provider' ? colors.onPrimary : colors.primary} />
+
+                <Text style={{ color: role === 'provider' ? colors.onPrimary : colors.primary }} variant={'titleMedium'}>Business Provider</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
 
